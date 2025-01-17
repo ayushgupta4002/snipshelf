@@ -19,6 +19,7 @@ model User {
   name     String?
   snippets Snippet[]
   apiKey   String    @unique
+  githubToken String?
 }
 
 model Snippet {

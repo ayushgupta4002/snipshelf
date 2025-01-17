@@ -77,7 +77,7 @@ export default function Dashboard() {
   }
   fetchData();
 
-  },[ session, snippets]);
+  },[ session]);
   
 
   if (status === "loading") {
