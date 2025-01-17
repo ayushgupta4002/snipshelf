@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,89 +22,67 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CodeIcon, PlusIcon, SearchIcon, ExternalLinkIcon, EyeOff, Eye, LogOut } from "lucide-react";
+import {
+  CodeIcon,
+  PlusIcon,
+  SearchIcon,
+  ExternalLinkIcon,
+  EyeOff,
+  Eye,
+  LogOut,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Loader from "../_components/Loader";
+import { getSnippetByUserId } from "@/helpers/snippet";
+import { set } from "date-fns";
+import { getServerSession } from "next-auth";
+import { Snippet } from "@/types";
 
 export default function Dashboard() {
-  
-  const { data: session, status } = useSession();
-  const [snippets, setSnippets] = useState([
-    {
-      id: 1,
-      title: "React useEffect Hook",
-      description: "Common useEffect patterns in React",
-      code: "useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []); useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);",
-      language: "javascript",
-      image:
-        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-    {
-      id: 2,
-      title: "Tailwind Flex Center",
-      description: "Center elements with Tailwind CSS",
-      code: '<div className="flex items-center justify-center">\n  <!-- Content here -->\n</div>',
-      language: "html",
-      image:
-        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-    {
-      id: 1,
-      title: "React useEffect Hook",
-      description: "Common useEffect patterns in React",
-      code: "useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);",
-      language: "javascript",
-      image:
-        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-    {
-      id: 2,
-      title: "Tailwind Flex Center",
-      description: "Center elements with Tailwind CSS",
-      code: '<div className="flex items-center justify-center">\n  <!-- Content here -->\n</div>',
-      language: "html",
-      image:
-        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-    {
-      id: 1,
-      title: "React useEffect Hook",
-      description: "Common useEffect patterns in React",
-      code: "useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);",
-      language: "javascript",
-      image:
-        "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-    {
-      id: 2,
-      title: "Tailwind Flex Center",
-      description: "Center elements with Tailwind CSS",
-      code: '<div className="flex items-center justify-center">\n  <!-- Content here -->\n</div>',
-      language: "html",
-      image:
-        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=300&h=200",
-    },
-  ]);
+
+  const { data: session, status } =  useSession();
+
+
+  const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [showApiKey, setShowApiKey] = useState(false);
   const profileData = {
     name: "John Doe",
     email: "john.doe@example.com",
-    apiKey: "sk-12345-abcde-67890"
+    apiKey: "sk-12345-abcde-67890",
   };
 
   const toggleApiKeyVisibility = () => {
     setShowApiKey(!showApiKey);
   };
 
-  const handleSignOut = () => {
-    // Handle sign out logic here
-    console.log("Signing out...");
-  };
+
+  useEffect(() => {
+    console.log("Session:", session);
+    const fetchData = async () => {if (status === "authenticated" && session?.user?.userId) {
+      console.log("Session authenticated:", session);
+      
+      try {
+        const data = await getSnippetByUserId(session.user.userId);
+        console.log("Data:", data);
+
+        setSnippets(data);
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    } else {
+      console.log("Session not authenticated or missing userId");
+    }
+  }
+  fetchData();
+
+  },[ session, snippets]);
+  
+
   if (status === "loading") {
     // Show a loading spinner or message while the session is being fetched
-    return <Loader/>;
+    return <Loader />;
   }
 
   if (!session) {
@@ -113,80 +91,90 @@ export default function Dashboard() {
     return null; // Prevent rendering anything else while signing in
   }
 
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1b1a1a] to-black">
       <nav className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-          <Link href={"/"}> <div className="flex items-center">
-              <CodeIcon className="h-8 w-8 text-primary" />
-              <span className="ml-2 text-2xl font-bold text-primary">
-                Snipit
-              </span>
-            </div></Link>
+            <Link href={"/"}>
+              {" "}
+              <div className="flex items-center">
+                <CodeIcon className="h-8 w-8 text-primary" />
+                <span className="ml-2 text-2xl font-bold text-primary">
+                  Snipit {session.user?.userId}
+                </span>
+              </div>
+            </Link>
             <div className="flex items-center space-x-4">
-            <Dialog>
+              <Dialog>
                 <DialogTrigger asChild>
-                <Avatar className="cursor-pointer">
-                <AvatarImage src={session.user?.image} />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src={session.user?.image} />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
                 </DialogTrigger>
                 <DialogContent>
-                  
-                <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Name</label>
-            <Input 
-              value={session.user?.name}
-              readOnly
-              className="w-full"
-            />
-          </div>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Name
+                      </label>
+                      <Input
+                        value={session.user?.name}
+                        readOnly
+                        className="w-full"
+                      />
+                    </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Email</label>
-            <Input 
-              value={session.user?.email}
-              readOnly
-              className="w-full"
-            />
-          </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Email
+                      </label>
+                      <Input
+                        value={session.user?.email}
+                        readOnly
+                        className="w-full"
+                      />
+                    </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">API Key</label>
-            <div className="flex gap-2">
-              <Input
-                type={showApiKey ? "text" : "password"}
-                value={profileData.apiKey}
-                readOnly
-                className="w-full font-mono"
-              />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleApiKeyVisibility}
-                className="flex-shrink-0"
-              >
-                {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        API Key
+                      </label>
+                      <div className="flex gap-2">
+                        <Input
+                          type={showApiKey ? "text" : "password"}
+                          value={profileData.apiKey}
+                          readOnly
+                          className="w-full font-mono"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={toggleApiKeyVisibility}
+                          className="flex-shrink-0"
+                        >
+                          {showApiKey ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
 
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={()=>signOut()}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-                  
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                      onClick={() => signOut()}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
                 </DialogContent>
               </Dialog>
-           
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button>
@@ -253,7 +241,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="bg-muted p-4 rounded-lg border shadow-sm overflow-hidden relative">
                     <pre className="overflow-hidden h-24 max-h-24">
-                      <code className="text-sm">{snippet.code}</code>
+                      <code className="text-sm">{snippet.content}</code>
                     </pre>
                     <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-muted to-transparent" />
                   </div>
