@@ -36,17 +36,22 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Loader from "../_components/Loader";
 import { getSnippetByUserId } from "@/helpers/snippet";
-import { set } from "date-fns";
-import { getServerSession } from "next-auth";
+
 import { Snippet } from "@/types";
+import Profile from "./_components/Profile";
+import { getUserByUserId } from "@/helpers/users";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { snippetAtom, userAtom } from "../atom";
 
 export default function Dashboard() {
 
   const { data: session, status } =  useSession();
 
 
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  // const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [showApiKey, setShowApiKey] = useState(false);
+  const setUser = useSetRecoilState<userAtom>(userAtom)
+  const [ snippets , setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const profileData = {
     name: "John Doe",
     email: "john.doe@example.com",
@@ -65,6 +70,8 @@ export default function Dashboard() {
       
       try {
         const data = await getSnippetByUserId(session.user.userId);
+        const user = await getUserByUserId(session.user.userId);
+        setUser(user);
         console.log("Data:", data);
 
         setSnippets(data);
@@ -90,9 +97,9 @@ export default function Dashboard() {
     signIn();
     return null; // Prevent rendering anything else while signing in
   }
-
+//bg-gradient-to-b from-[#1b1a1a] to-black
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1b1a1a] to-black">
+    <div className="min-h-screen bg-zinc-900">
       <nav className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
@@ -101,7 +108,7 @@ export default function Dashboard() {
               <div className="flex items-center">
                 <CodeIcon className="h-8 w-8 text-primary" />
                 <span className="ml-2 text-2xl font-bold text-primary">
-                  Snipit {session.user?.userId}
+                  Snipit
                 </span>
               </div>
             </Link>
@@ -210,6 +217,7 @@ export default function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Profile session={session}/>
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Your Snips</h1>
           <div className="relative">

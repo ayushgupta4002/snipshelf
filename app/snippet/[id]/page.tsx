@@ -11,24 +11,59 @@ import {
   ArrowLeftIcon,
   Cross,
   X,
+  Github,
 } from "lucide-react";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
+
 import Loader from "@/app/_components/Loader";
 import { signIn, useSession } from "next-auth/react";
 import { getSnippetBySnipId, updateSnippet } from "@/helpers/snippet";
 import { Snippet } from "@/types";
+import { useRecoilState } from "recoil";
+import { snippetAtom } from "@/app/atom";
 
 export default function SnippetPage({ params }: { params: { id: string } }) {
+    const [ snippets , setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
+  const thisSnippet = snippets.find((s) => s.id === Number(params.id));
   const [isEditing, setIsEditing] = useState(false);
-  const [snippet, setSnippet] = useState<Snippet>({});
+  const [snippet, setSnippet] = useState<Snippet>(thisSnippet || { id: 0, title: '', content: '', description: '', userId: 0, createdAt: new Date(), updatedAt: new Date() });
   const [prevSnippet, setPrevSnippet] = useState<Snippet>({});
   const { data: session, status } = useSession();
+  const { toast } = useToast();
+
   const handleSave = async () => {
     console.log("Save snippet:", snippet);
     await updateSnippet(snippet);
     setIsEditing(false);
   };
-
+  const pushToGitHub = async () => {
+    await fetch("/api/github/create-gist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filename: snippet.title,
+        content: snippet.content,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+        toast({
+          title: "Successful",
+          description: "data pushed successfully to github",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      });
+  };
   const handleCopy = () => {
     navigator.clipboard.writeText(snippet.content);
   };
@@ -55,7 +90,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       }
     };
     fetchData();
-  }, [session]);
+  }, [params.id, session, status]);
   if (status === "loading") {
     // Show a loading spinner or message while the session is being fetched
     return <Loader />;
@@ -172,13 +207,20 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   </h1>
                 )}
               </div>
+              <button
+                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
+                onClick={() => pushToGitHub()}
+              >
+                <Github className="w-5 h-5 text-black" />
+                <span>Push to GitHub</span>
+              </button>
               <div className=" pt-3 space-y-4">
                 <h2 className="text-lg font-semibold text-primary">
                   Description
                 </h2>
                 {isEditing ? (
                   <Textarea
-                    value={snippet.description}
+                    value={snippet.description || ""}
                     onChange={(e) =>
                       setSnippet({ ...snippet, description: e.target.value })
                     }

@@ -4,7 +4,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
-
+import { Toaster } from "@/components/ui/toaster"
+import {
+  RecoilRoot,
+} from 'recoil';
 const inter = Inter({ subsets: ['latin'] });
 
 // export const metadata: Metadata = {
@@ -19,6 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <RecoilRoot>
       <body className={`${inter.className} dark`}>
         <ThemeProvider
           attribute="class"
@@ -28,9 +32,13 @@ export default function RootLayout({
         >
           <SessionProvider>
           {children}
+          <Toaster />
+
+
           </SessionProvider>
         </ThemeProvider>
       </body>
+      </RecoilRoot>
     </html>
   );
 }

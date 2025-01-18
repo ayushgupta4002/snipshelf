@@ -44,3 +44,11 @@ export async function createUser({name, email}: {name: string, email: string}) {
 
 
 
+
+export async function getUserByUserId(id: number) {
+    return await prisma.user.findFirst({
+        where: {
+        id: id,
+        },
+    });
+}
