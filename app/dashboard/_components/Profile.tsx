@@ -2,22 +2,36 @@
 //todo ^^^^ remove this and solve warnings
 
 import React, { use, useState } from "react";
-import { Github, Key, Eye, EyeOff, RefreshCw } from "lucide-react";
+import {
+  Github,
+  Key,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  CheckCircleIcon,
+} from "lucide-react";
 import { SessionOptions } from "next-auth";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "@/app/atom";
 import Link from "next/link";
 import { updateUser } from "@/helpers/users";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { generateAPIToken } from "@/helpers/generateAPItoken";
 
 const Profile = ({ session }: { session: any }) => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [user, setUser] = useRecoilState(userAtom);
-  const {toast} = useToast();
-
+  const { toast } = useToast();
+  console.log(user);
   const generateNewApiKey = async () => {
     // In a real app, this would make an API call
-    const newKey = "sk_live_" + Math.random().toString(36).substring(2, 15);
+    const newKey = "sk_live_" + generateAPIToken();
     setUser({ ...user, apiKey: newKey });
     await updateUser({ ...user, apiKey: newKey })
       .then((res) => {
@@ -25,14 +39,14 @@ const Profile = ({ session }: { session: any }) => {
         toast({
           title: "API Key Regenerated",
           description: "Your API Key has been regenerated successfully",
-        })
+        });
       })
       .catch((err) => {
         console.log(err);
         toast({
           title: "Error",
           description: "An error occurred while regenerating your API Key",
-        })
+        });
       });
   };
 
@@ -61,18 +75,43 @@ const Profile = ({ session }: { session: any }) => {
               </p>
             </div>
             <Link href={"/api/github/oauthGithub"}>
-              <div className="w-full sm:w-auto">
-                <button className="flex items-center gap-2 px-2 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-md transition w-full justify-center group">
-                  <Github
-                    size={18}
-                    className="group-hover:rotate-12 transition-transform"
-                  />
-                  <span>Connect to GitHub Gists</span>
-                </button>
-                <p className="text-xs text-zinc-500 mt-1 text-center sm:text-right">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                    <div className="w-full sm:w-auto">
+                    <button className="flex items-center gap-2 px-2 py-2  bg-green-500 hover:bg-green-600 text-black rounded-md transition w-full justify-center group">
+                        {user?.githubToken  ? (
+                          <>
+                            <CheckCircleIcon
+                              size={18}
+                              className="group-hover:rotate-12 transition-transform"
+                            />
+                 <span>Connected to GitHub Gists</span>
+
+                          </>
+                        ) : (
+                          <>
+                            <Github
+                              size={18}
+                              className="group-hover:rotate-12 transition-transform"
+                            />
+                            <span>Connect to GitHub Gists</span>{" "}
+                          </>
+                        )}
+                      </button>
+                      <p className="text-xs text-zinc-500 mt-1 text-center sm:text-right">
                   Sync and backup your snippets to a GitHub Gists
                 </p>
-              </div>
+                      </div>
+
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {user?.githubToken ? <><div className="w-full sm:w-auto">Click to connect your github again.</div></> : <></>}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+               
             </Link>
           </div>
 

@@ -95,6 +95,9 @@ export const authOptions: AuthOptions = {
       return `${baseUrl}/dashboard`;
     },
   },
+  pages: {
+    signIn: '/signin',
+  },
 };
 
 const handler = NextAuth(authOptions);

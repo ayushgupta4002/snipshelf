@@ -1,17 +1,18 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { CodeIcon, BookMarkedIcon, ZapIcon } from "lucide-react";
+import { CodeIcon, BookMarkedIcon, ZapIcon, Terminal, Code2 } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FeaturesSectionDemo } from "./_components/Hero";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   const {data : session} = useSession();
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-[hsl(0,0%,13%)] to-black">
-      <nav className="border-b border-border/10 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="border-b h-[8vh] border-border/10 backdrop-blur-sm">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <CodeIcon className="h-8 w-8 text-primary" />
@@ -24,13 +25,13 @@ export default function Home() {
         </div>
       </nav>
 
-      <main>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-25">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold tracking-tight text-primary mb-6">
+      <main className="h-[92vh] flex flex-col justify-center">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-25">
+          <div className="text-left">
+            <h1 className="text-6xl font-bold tracking-tight text-primary mb-6">
               Your Personal Code Snippet Library
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
+            <p className="text-xl text-muted-foreground max-w-2xl  mb-12">
               Store, organize, and access your code snippets with ease. Never lose track of your valuable code fragments again.
             </p>
             <Link href="/dashboard">
@@ -39,7 +40,8 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-<FeaturesSectionDemo/>
+
+          
           {/* <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
@@ -71,6 +73,30 @@ export default function Home() {
           </div> */}
         </div>
       </main>
+      <Card className="w-full max-w-md bg-white/10 backdrop-blur-xl border-white/20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-black-500/10" />
+        <div className="relative p-4">
+          <div className="flex justify-center mb-8">
+            <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
+              <Code2 className="w-10 h-10 text-white" />
+            </div>
+          </div>
+
+          <h1 className="text-3xl font-bold text-center text-white mb-2">
+            Welcome to Snipit
+          </h1>
+          <p className="text-center text-slate-300 mb-8">
+            Your personal code snippet library
+          </p>
+
+       
+          <div className="mt-8 flex items-center gap-2 justify-center text-slate-400">
+            <Terminal className="w-4 h-4" />
+            <p className="text-sm">Access your snippets anywhere</p>
+          </div>
+        </div>
+      </Card>
+      <FeaturesSectionDemo />
     </div>
   );
 }

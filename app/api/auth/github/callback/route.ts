@@ -67,7 +67,7 @@ export async function GET(request: NextRequest , res : NextResponse) {
         console.log('User Data: TOKEN :', access_token);
      
 
-        return NextResponse.redirect('http://localhost:3000/dashboard');
+        return NextResponse.redirect('http://localhost:3000/dashboard?status=oauth_success');
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error:   'Internal Server Error'  }, { status: 500 });

@@ -15,6 +15,8 @@ export interface snippetAtom {
   content: string;
   userId: number;
   description: string | null;
+  gistId: string | null;
+  gistUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

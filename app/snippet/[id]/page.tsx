@@ -37,6 +37,8 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       userId: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
+      gistId: "",
+      gistUrl: "",
     }
   );
   const [prevSnippet, setPrevSnippet] = useState<Snippet>({});
@@ -50,6 +52,9 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     await updateSnippet(snippet);
     setIsEditing(false);
   };
+
+
+
   const pushToGitHub = async () => {
     setIsPushing(true);
     await fetch("/api/github/create-gist", {
@@ -60,25 +65,31 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       body: JSON.stringify({
         filename: snippet.title,
         content: snippet.content,
+        snippetId: snippet.id,
       }),
     })
       .then(async (res) => {
         const response = await res.json();
         if (res.status === 200) {
+          setSnippet({...snippet, gistId: response.gist.id , gistUrl: response.gistUrl});
+
           toast({
             title: "Successful",
             description: "data pushed successfully to github",
           });
         } else {
+          console.log(response);
           toast({
             title: "Error",
             description: response.error || "Error in pushing data to github",
-            action: (
-              <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
-                <Github className="w-5 h-5 text-black" />
-                <span>Connect</span>
-              </button>
-            ),
+            action: response.key === "GITHUB_NOT_CONNECTED" ? (
+              <Link href={"/api/github/oauthGithub"}>
+                <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
+                  <Github className="w-5 h-5 text-black" />
+                  <span>Connect</span>
+                </button>
+              </Link>
+            ) : undefined,
           });
         }
       })
@@ -93,11 +104,72 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       setIsPushing(false);
 
   };
+
+  const updateGist = async () => {
+    setIsPushing(true);
+    // if(!snippet.gistId){
+    //   setIsPushing(false);
+    //   return;
+    // }
+    await fetch("/api/github/update-gist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filename: snippet.title,
+        content: snippet.content,
+        gistId: snippet.gistId,
+        snippetId: snippet.id,
+      }),
+    })
+      .then(async (res) => {
+        const response = await res.json();
+        if (res.status === 200) {
+          toast({
+            title: "Successful",
+            description: "data updated successfully to github gists",
+          });
+        } else {
+          if(response.key === "NOT_FOUND"){
+            setSnippet({...snippet, gistId: "" , gistUrl: ""});
+          }
+
+          console.log(response);
+          toast({
+            title: "Error",
+            description: response.error || "Error in pushing data to github",
+            action: response.key === "GITHUB_NOT_CONNECTED" ? (
+              <Link href={"/api/github/oauthGithub"}>
+                <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
+                  <Github className="w-5 h-5 text-black" />
+                  <span>Connect</span>
+                </button>
+              </Link>
+            ) : undefined,
+          });        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      });
+      setIsPushing(false);
+
+  };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(snippet.content);
   };
   useEffect(() => {
+    console.log("called")
     const fetchData = async () => {
+      if(snippet.id !=0){
+        return;
+      }
       if (status === "authenticated" && session?.user?.userId) {
         console.log("Session authenticated:", session);
 
@@ -120,8 +192,10 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     };
     fetchData();
   }, [params.id, session, status]);
+
+
+
   if (status === "loading") {
-    // Show a loading spinner or message while the session is being fetched
     return <Loader />;
   }
 
@@ -165,7 +239,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="text-muted-foreground hover:text-primary"
                 >
                   <ClipboardCopyIcon className="h-4 w-4 mr-2" />
-                  Copy Code
+                  Share
                 </Button>
               )}
 
@@ -244,13 +318,20 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   <span>Pushing...</span>
                 </button>
               ) : (
+                <>
                 <button
                   className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
-                  onClick={() => pushToGitHub()}
+                  onClick={() => {
+                    if (snippet.gistId) {
+                      updateGist();
+                    } else {
+                      pushToGitHub();
+                    }
+                  }}
                 >
                   <Github className="w-5 h-5 text-black" />
-                  <span>Push to GitHub</span>
-                </button>
+                  {snippet.gistId ? <span>Update Gist</span>:<span>Push to GitHub Gists</span> }
+                </button></>
               )}
               <div className=" pt-3 space-y-4">
                 <h2 className="text-lg font-semibold text-primary">

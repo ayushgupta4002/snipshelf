@@ -8,10 +8,13 @@ import { authOptions } from "../../authOptions";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { filename, content } = body;
+    const { filename, content, snippetId } = body;
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized", key: "UNAUTHORIZED" },
+        { status: 401 }
+      );
     }
     const user = await prisma.user.findFirst({
       where: {
@@ -23,17 +26,17 @@ export async function POST(request: NextRequest) {
     });
 
     const accessToken = user?.githubToken;
-    if ( !accessToken) {
+    if (!accessToken) {
       return NextResponse.json(
-        { error: "Please Connect Your Account to Github" },
+        { error: "Please Connect Your Account to Github" , key: "GITHUB_NOT_CONNECTED"},
         { status: 400 }
       );
     }
 
     // Validate required fields
-    if (!filename || !content ) {
+    if (!filename || !content) {
       return NextResponse.json(
-        { error: "Missing required fields: filename or content" },
+        { error: "Missing required fields: filename or content" , key: "MISSING_FIELDS"},
         { status: 400 }
       );
     }
@@ -57,14 +60,34 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    if (response.data) {
+      await prisma.snippet
+        .update({
+          where: {
+            id: snippetId,
+            userId: session?.user.userId,
+          },
+          data: {
+            gistId: response.data.id,
+            gistUrl: response.data.html_url,
+          },
+        })
+        .then((res) => {
+          console.log("Snippet updated with gist details", res);
+        })
+        .catch((error) => {
+          console.error("Error updating snippet with gist details", error);
+        });
+    }
     return NextResponse.json(
       {
         success: true,
         gist: response.data,
         url: response.data.html_url,
+        key: "CREATED",
       },
       {
-        status: 201,
+        status: 200,
       }
     );
   } catch (error) {
@@ -74,6 +97,7 @@ export async function POST(request: NextRequest) {
       {
         error: "Failed to create gist",
         details: error instanceof Error ? error.message : "Unknown error",
+        key: "FAILED",
       },
       {
         status: 500,

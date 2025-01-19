@@ -44,11 +44,14 @@ import { deleteUserbyId, getUserByUserId } from "@/helpers/users";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { snippetAtom, userAtom } from "../atom";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Dashboard() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const { data: session, status } =  useSession();
+  const router = useRouter();
 
 
   // const [snippets, setSnippets] = useState<Snippet[]>([]);
@@ -70,6 +73,19 @@ export default function Dashboard() {
   const toggleApiKeyVisibility = () => {
     setShowApiKey(!showApiKey);
   };
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status === 'oauth_success') {
+      toast({
+        title: "Account Connected",
+        description: "Your account has been connected successfully",
+      });
+      const params = new URLSearchParams(searchParams);
+      params.delete('status');
+
+      router.replace(`/dashboard?${params.toString()}`);
+    }
+  }, [searchParams]);
 
 
   useEffect(() => {
@@ -80,7 +96,9 @@ export default function Dashboard() {
       try {
         const data = await getSnippetByUserId(session.user.userId);
         const user = await getUserByUserId(session.user.userId);
-        setUser(user);
+        if (user) {
+          setUser(user);
+        }
         console.log("Data:", data);
 
         setSnippets(data);
