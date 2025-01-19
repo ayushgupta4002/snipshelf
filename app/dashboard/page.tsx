@@ -30,6 +30,7 @@ import {
   EyeOff,
   Eye,
   LogOut,
+  Delete,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
@@ -39,11 +40,13 @@ import { getSnippetByUserId } from "@/helpers/snippet";
 
 import { Snippet } from "@/types";
 import Profile from "./_components/Profile";
-import { getUserByUserId } from "@/helpers/users";
+import { deleteUserbyId, getUserByUserId } from "@/helpers/users";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { snippetAtom, userAtom } from "../atom";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
+  const { toast } = useToast();
 
   const { data: session, status } =  useSession();
 
@@ -52,11 +55,17 @@ export default function Dashboard() {
   const [showApiKey, setShowApiKey] = useState(false);
   const setUser = useSetRecoilState<userAtom>(userAtom)
   const [ snippets , setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
-  const profileData = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    apiKey: "sk-12345-abcde-67890",
-  };
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredSnippets = snippets.filter(snippet => {
+    const matchesSearch = 
+      searchQuery === "" ||
+      snippet.title.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+      snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      snippet.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      snippet.content.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch ;
+  });
+
 
   const toggleApiKeyVisibility = () => {
     setShowApiKey(!showApiKey);
@@ -85,7 +94,21 @@ export default function Dashboard() {
   fetchData();
 
   },[ session]);
-  
+  const deleteAccount = async( )=>{
+    if(!session || !session.user.userId) {
+      console.error("Session not authenticated or missing userId");
+      return;
+    };
+    console.log("Deleting Account")
+    await deleteUserbyId(session.user.userId).then(()=>{
+      console.log("Account Deleted")
+      toast({
+        title: "We will miss you `😢`",
+        description: "Your account has been deleted!",
+      });
+      signOut();
+    }).catch((err)=>{console.error(err)});
+  }
 
   if (status === "loading") {
     // Show a loading spinner or message while the session is being fetched
@@ -144,7 +167,7 @@ export default function Dashboard() {
                       />
                     </div>
 
-                    <div className="space-y-2">
+                    {/* <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">
                         API Key
                       </label>
@@ -168,16 +191,24 @@ export default function Dashboard() {
                           )}
                         </Button>
                       </div>
-                    </div>
-
+                    </div> */}
+<div className="flex flex-row space-x-2">
                     <Button
-                      variant="destructive"
+                      variant="secondary"
                       className="w-full"
                       onClick={() => signOut()}
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign Out
                     </Button>
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                      onClick={() => deleteAccount()}
+                    >
+                      <Delete className="mr-2 h-4 w-4" />
+Delete Account                    </Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -225,22 +256,24 @@ export default function Dashboard() {
             <Input
               className="pl-10 w-[300px]"
               placeholder="Search snippets..."
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {snippets.map((snippet) => (
+          {(searchQuery.length > 0 ? filteredSnippets : snippets).map((snippet) => (
             <Link href={`/snippet/${snippet.id}`} key={snippet.id}>
-              <Card className="overflow-hidden  bg-gradient-to-br from-[#2a2929] to-black group hover:border-primary/50 transition-colors">
-                {/* <div className="relative left-70 top-2">
-                      <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div> */}
+              <Card  className="overflow-hidden  bg-gradient-to-br from-[#2a2929] to-black group hover:border-primary/50 transition-colors">
+
                 <div className="relative">
                   {/* <img src={snippet.image} alt={snippet.title} className="w-full h-48 object-cover" /> */}
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                 </div>
-                <CardHeader>
+                <CardHeader className="relative">
+                <div className="absolute top-2" style={{right: "1rem"}} >
+                      <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
                   <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
                     {snippet.title}{" "}
                   </CardTitle>

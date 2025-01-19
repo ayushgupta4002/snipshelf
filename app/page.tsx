@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CodeIcon, BookMarkedIcon, ZapIcon } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { FeaturesSectionDemo } from "./_components/Hero";
 
 export default function Home() {
   const {data : session} = useSession();
@@ -24,7 +25,7 @@ export default function Home() {
       </nav>
 
       <main>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-25">
           <div className="text-center">
             <h1 className="text-5xl font-bold tracking-tight text-primary mb-6">
               Your Personal Code Snippet Library
@@ -38,7 +39,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-
+<FeaturesSectionDemo/>
           {/* <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">

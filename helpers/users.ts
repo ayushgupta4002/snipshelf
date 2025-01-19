@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import {generateAPIToken} from "./generateAPItoken"
+import { User } from "@prisma/client";
 
 const data =[
   {
@@ -42,7 +43,13 @@ export async function createUser({name, email}: {name: string, email: string}) {
   return user;
 }
 
-
+export async function deleteUserbyId(id: number) {
+  return await prisma.user.delete({
+    where: {
+      id: id,
+    },
+  });
+}
 
 
 export async function getUserByUserId(id: number) {
@@ -51,4 +58,15 @@ export async function getUserByUserId(id: number) {
         id: id,
         },
     });
+}
+
+
+export async function updateUser(user : User){
+  return await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: user
+    
+  });
 }

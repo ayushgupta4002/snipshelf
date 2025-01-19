@@ -22,14 +22,27 @@ import { getSnippetBySnipId, updateSnippet } from "@/helpers/snippet";
 import { Snippet } from "@/types";
 import { useRecoilState } from "recoil";
 import { snippetAtom } from "@/app/atom";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function SnippetPage({ params }: { params: { id: string } }) {
-    const [ snippets , setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
+  const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const thisSnippet = snippets.find((s) => s.id === Number(params.id));
   const [isEditing, setIsEditing] = useState(false);
-  const [snippet, setSnippet] = useState<Snippet>(thisSnippet || { id: 0, title: '', content: '', description: '', userId: 0, createdAt: new Date(), updatedAt: new Date() });
+  const [snippet, setSnippet] = useState<Snippet>(
+    thisSnippet || {
+      id: 0,
+      title: "",
+      content: "",
+      description: "",
+      userId: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+  );
   const [prevSnippet, setPrevSnippet] = useState<Snippet>({});
+  const [isPushing, setIsPushing] = useState(false);
   const { data: session, status } = useSession();
+
   const { toast } = useToast();
 
   const handleSave = async () => {
@@ -38,6 +51,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     setIsEditing(false);
   };
   const pushToGitHub = async () => {
+    setIsPushing(true);
     await fetch("/api/github/create-gist", {
       method: "POST",
       headers: {
@@ -48,12 +62,25 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
         content: snippet.content,
       }),
     })
-      .then((res) => {
-        console.log(res);
-        toast({
-          title: "Successful",
-          description: "data pushed successfully to github",
-        });
+      .then(async (res) => {
+        const response = await res.json();
+        if (res.status === 200) {
+          toast({
+            title: "Successful",
+            description: "data pushed successfully to github",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: response.error || "Error in pushing data to github",
+            action: (
+              <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
+                <Github className="w-5 h-5 text-black" />
+                <span>Connect</span>
+              </button>
+            ),
+          });
+        }
       })
       .catch((err) => {
         console.error(err);
@@ -63,6 +90,8 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           description: "There was a problem with your request.",
         });
       });
+      setIsPushing(false);
+
   };
   const handleCopy = () => {
     navigator.clipboard.writeText(snippet.content);
@@ -207,13 +236,22 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   </h1>
                 )}
               </div>
-              <button
-                className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
-                onClick={() => pushToGitHub()}
-              >
-                <Github className="w-5 h-5 text-black" />
-                <span>Push to GitHub</span>
-              </button>
+              {isPushing ? (
+                <button
+                  className="flex items-center gap-2 cursor-not-allowed bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
+                >
+                  <Github className="w-5 h-5 text-black" />
+                  <span>Pushing...</span>
+                </button>
+              ) : (
+                <button
+                  className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
+                  onClick={() => pushToGitHub()}
+                >
+                  <Github className="w-5 h-5 text-black" />
+                  <span>Push to GitHub</span>
+                </button>
+              )}
               <div className=" pt-3 space-y-4">
                 <h2 className="text-lg font-semibold text-primary">
                   Description

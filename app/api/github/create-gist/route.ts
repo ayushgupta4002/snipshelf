@@ -23,11 +23,17 @@ export async function POST(request: NextRequest) {
     });
 
     const accessToken = user?.githubToken;
+    if ( !accessToken) {
+      return NextResponse.json(
+        { error: "Please Connect Your Account to Github" },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
-    if (!filename || !content || !accessToken) {
+    if (!filename || !content ) {
       return NextResponse.json(
-        { error: "Missing required fields: filename, content, or accessToken" },
+        { error: "Missing required fields: filename or content" },
         { status: 400 }
       );
     }

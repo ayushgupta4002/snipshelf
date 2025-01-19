@@ -26,7 +26,7 @@ model Snippet {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   description String?
   createdAt DateTime @default(now())
