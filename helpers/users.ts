@@ -23,13 +23,14 @@ const data =[
   },
 ]
 
-export async function createUser({name, email}: {name: string, email: string}) {
+export async function createUser({name, email, isGuest}: {name: string, email: string , isGuest?: boolean}) {
   // Create user
  const user= await prisma.user.create({
     data: {
       email : email,
       name : name,
       apiKey : generateAPIToken(),
+      isGuest: isGuest != undefined ? isGuest : false
     },
   })
   await prisma.snippet.createMany({

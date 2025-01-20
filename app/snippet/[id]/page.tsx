@@ -12,6 +12,7 @@ import {
   Cross,
   X,
   Github,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -53,8 +54,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     setIsEditing(false);
   };
 
-
-
   const pushToGitHub = async () => {
     setIsPushing(true);
     await fetch("/api/github/create-gist", {
@@ -71,7 +70,11 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       .then(async (res) => {
         const response = await res.json();
         if (res.status === 200) {
-          setSnippet({...snippet, gistId: response.gist.id , gistUrl: response.gistUrl});
+          setSnippet({
+            ...snippet,
+            gistId: response.gist.id,
+            gistUrl: response.gistUrl,
+          });
 
           toast({
             title: "Successful",
@@ -82,14 +85,15 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           toast({
             title: "Error",
             description: response.error || "Error in pushing data to github",
-            action: response.key === "GITHUB_NOT_CONNECTED" ? (
-              <Link href={"/api/github/oauthGithub"}>
-                <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
-                  <Github className="w-5 h-5 text-black" />
-                  <span>Connect</span>
-                </button>
-              </Link>
-            ) : undefined,
+            action:
+              response.key === "GITHUB_NOT_CONNECTED" ? (
+                <Link href={"/api/github/oauthGithub"}>
+                  <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
+                    <Github className="w-5 h-5 text-black" />
+                    <span>Connect</span>
+                  </button>
+                </Link>
+              ) : undefined,
           });
         }
       })
@@ -101,8 +105,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           description: "There was a problem with your request.",
         });
       });
-      setIsPushing(false);
-
+    setIsPushing(false);
   };
 
   const updateGist = async () => {
@@ -131,23 +134,25 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             description: "data updated successfully to github gists",
           });
         } else {
-          if(response.key === "NOT_FOUND"){
-            setSnippet({...snippet, gistId: "" , gistUrl: ""});
+          if (response.key === "NOT_FOUND") {
+            setSnippet({ ...snippet, gistId: "", gistUrl: "" });
           }
 
           console.log(response);
           toast({
             title: "Error",
             description: response.error || "Error in pushing data to github",
-            action: response.key === "GITHUB_NOT_CONNECTED" ? (
-              <Link href={"/api/github/oauthGithub"}>
-                <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
-                  <Github className="w-5 h-5 text-black" />
-                  <span>Connect</span>
-                </button>
-              </Link>
-            ) : undefined,
-          });        }
+            action:
+              response.key === "GITHUB_NOT_CONNECTED" ? (
+                <Link href={"/api/github/oauthGithub"}>
+                  <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black font-semibold py-1 px-2 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
+                    <Github className="w-5 h-5 text-black" />
+                    <span>Connect</span>
+                  </button>
+                </Link>
+              ) : undefined,
+          });
+        }
       })
       .catch((err) => {
         console.error(err);
@@ -157,17 +162,16 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           description: "There was a problem with your request.",
         });
       });
-      setIsPushing(false);
-
+    setIsPushing(false);
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(snippet.content);
   };
   useEffect(() => {
-    console.log("called")
+    console.log("called");
     const fetchData = async () => {
-      if(snippet.id !=0){
+      if (snippet.id != 0) {
         return;
       }
       if (status === "authenticated" && session?.user?.userId) {
@@ -192,8 +196,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     };
     fetchData();
   }, [params.id, session, status]);
-
-
 
   if (status === "loading") {
     return <Loader />;
@@ -311,27 +313,41 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                 )}
               </div>
               {isPushing ? (
-                <button
-                  className="flex items-center gap-2 cursor-not-allowed bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
-                >
+                <button className="flex items-center gap-2 cursor-not-allowed bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform">
                   <Github className="w-5 h-5 text-black" />
                   <span>Pushing...</span>
                 </button>
               ) : (
-                <>
-                <button
-                  className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
-                  onClick={() => {
-                    if (snippet.gistId) {
-                      updateGist();
-                    } else {
-                      pushToGitHub();
-                    }
-                  }}
-                >
-                  <Github className="w-5 h-5 text-black" />
-                  {snippet.gistId ? <span>Update Gist</span>:<span>Push to GitHub Gists</span> }
-                </button></>
+                <div className="flex flex-row space-x-3">
+                  <button
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-black  font-semibold py-2 px-3 rounded-3xl transition-colors duration-200 shadow-md hover:shadow-lg active:scale-95 transform"
+                    onClick={() => {
+                      if (snippet.gistId) {
+                        updateGist();
+                      } else {
+                        pushToGitHub();
+                      }
+                    }}
+                  >
+                    <Github className="w-5 h-5 text-black" />
+                    {snippet.gistId ? (
+                      <span>Update Gist</span>
+                    ) : (
+                      <span>Push to GitHub Gists</span>
+                    )}
+                  </button>
+                { snippet.gistUrl && <button
+                    className={`flex items-center gap-1.5 text-green-500 hover:text-green-600 font-medium transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed group`}
+                    onClick={()=> snippet.gistUrl && window.open(snippet.gistUrl, "_blank")}
+                    disabled={!snippet.gistId}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span className="border-b border-dashed border-gray-400 group-hover:border-gray-900 transition-colors duration-200">
+                      Visit
+                    </span>
+                  </button>
+}
+                </div>
               )}
               <div className=" pt-3 space-y-4">
                 <h2 className="text-lg font-semibold text-primary">

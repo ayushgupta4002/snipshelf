@@ -231,35 +231,10 @@ Delete Account                    </Button>
                 </DialogContent>
               </Dialog>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>
+              <Link href={"/integration/vscode"} target="blank"><Button >
                     <PlusIcon className="h-4 w-4 mr-2" />
                     New Snippet
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create New Snippet</DialogTitle>
-                    <DialogDescription>
-                      Add a new code snippet to your collection
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <Input placeholder="Snippet Title" />
-                    <Input placeholder="Description" />
-                    <Textarea
-                      placeholder="Paste your code here"
-                      className="font-mono"
-                      rows={6}
-                    />
-                    <Input placeholder="Image URL (optional)" />
-                  </div>
-                  <DialogFooter>
-                    <Button>Save Snippet</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                  </Button></Link>
             </div>
           </div>
         </div>

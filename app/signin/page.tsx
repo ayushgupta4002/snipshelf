@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 function Page() {
+  const handleGuestLogin = () => {
+    signIn("guest", { callbackUrl: "/dashboard" });
+  };
   return (
     <div className="min-h-screen  bg-gradient-to-b from-[hsl(0,0%,13%)] to-black flex items-center justify-center p-4">
       {/* Animated background elements */}
@@ -74,6 +77,20 @@ function Page() {
               Sign in with Google
             </div>
           </Button>
+
+          
+          <Button
+            variant="outline"
+            className="w-full bg-white/5 mt-2 hover:bg-white/10 backdrop-blur-sm border-white/20 text-white hover:text-white transition-all duration-300"
+            onClick={() => handleGuestLogin()}
+          >
+            <div className="flex items-center justify-center gap-3">
+              
+              Sign in as Guest
+            </div>
+          </Button>
+
+          
 
           <div className="mt-8 flex items-center gap-2 justify-center text-slate-400">
             <Terminal className="w-4 h-4" />
