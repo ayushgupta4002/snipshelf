@@ -13,17 +13,23 @@ import {
   X,
   Github,
   ExternalLink,
+  Trash2Icon,
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
 import Loader from "@/app/_components/Loader";
 import { signIn, useSession } from "next-auth/react";
-import { getSnippetBySnipId, updateSnippet } from "@/helpers/snippet";
+import {
+  deleteSnippetbyId,
+  getSnippetBySnipId,
+  updateSnippet,
+} from "@/helpers/snippet";
 import { Snippet } from "@/types";
 import { useRecoilState } from "recoil";
 import { snippetAtom } from "@/app/atom";
 import { ToastAction } from "@/components/ui/toast";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export default function SnippetPage({ params }: { params: { id: string } }) {
   const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
@@ -45,6 +51,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
   const [prevSnippet, setPrevSnippet] = useState<Snippet>({});
   const [isPushing, setIsPushing] = useState(false);
   const { data: session, status } = useSession();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { toast } = useToast();
 
@@ -196,6 +203,52 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     };
     fetchData();
   }, [params.id, session, status]);
+  
+  const deleteSnippet = async (id: number) => {
+    if (!session || !session.user.userId) {
+      console.error("Session not authenticated or missing userId");
+      return;
+    }
+    const targetSnippet = snippets.find(
+      (snippet) => snippet.id === Number(id)
+    );
+    if(!targetSnippet){
+      return;
+    }
+    try {    
+      const newSnippets = snippets.filter(
+        (snippet) => snippet.id !== Number(id)
+      );
+      setSnippets(newSnippets);
+
+      await deleteSnippetbyId(Number(id))
+        .then(() => {
+          toast({
+            title: "Success",
+            description: "Snippet deleted successfully",
+          });
+        })
+        .catch((err) => {
+          snippets.push(targetSnippet);
+          console.error(err);
+          toast({
+            title: "Error",
+            description: "Failed to delete snippet",
+          });
+        });
+    } catch (err) {
+      snippets.push(targetSnippet);
+      console.error(err);
+      toast({
+        title: "Error",
+        description: "Failed to delete snippet",
+      });
+    }
+    finally{
+      setIsDialogOpen(false);
+      window.location.href = "/dashboard";
+    }
+  };
 
   if (status === "loading") {
     return <Loader />;
@@ -222,6 +275,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                 Back to Dashboard
               </Link>
             </div>
+
             <div className="flex items-center space-x-4">
               {isEditing ? (
                 <Button
@@ -244,6 +298,44 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   Share
                 </Button>
               )}
+
+              {!isEditing && <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    className="text-muted-foreground  hover:text-primary"
+                  >
+                    <Trash2Icon className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <div className="space-y-4 py-4">
+                    <h2 className="text-lg font-semibold text-primary">
+                      Are you sure you want to delete this snippet?
+                    </h2>
+
+                    <div className="flex flex-row space-x-2">
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => {setIsDialogOpen(false)}}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="w-full"
+                        onClick={() => deleteSnippet(snippet.id)}
+                      >
+                        <Trash2Icon className="mr-2 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog> }
 
               {isEditing ? (
                 <Button
@@ -336,17 +428,21 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                       <span>Push to GitHub Gists</span>
                     )}
                   </button>
-                { snippet.gistUrl && <button
-                    className={`flex items-center gap-1.5 text-green-500 hover:text-green-600 font-medium transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed group`}
-                    onClick={()=> snippet.gistUrl && window.open(snippet.gistUrl, "_blank")}
-                    disabled={!snippet.gistId}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span className="border-b border-dashed border-gray-400 group-hover:border-gray-900 transition-colors duration-200">
-                      Visit
-                    </span>
-                  </button>
-}
+                  {snippet.gistUrl && (
+                    <button
+                      className={`flex items-center gap-1.5 text-green-500 hover:text-green-600 font-medium transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed group`}
+                      onClick={() =>
+                        snippet.gistUrl &&
+                        window.open(snippet.gistUrl, "_blank")
+                      }
+                      disabled={!snippet.gistId}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span className="border-b border-dashed border-gray-400 group-hover:border-gray-900 transition-colors duration-200">
+                        Visit
+                      </span>
+                    </button>
+                  )}
                 </div>
               )}
               <div className=" pt-3 space-y-4">

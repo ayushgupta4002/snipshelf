@@ -31,12 +31,13 @@ import {
   Eye,
   LogOut,
   Delete,
+  Trash2Icon,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Loader from "../_components/Loader";
-import { getSnippetByUserId } from "@/helpers/snippet";
+import { deleteSnippetbyId, getSnippetByUserId } from "@/helpers/snippet";
 
 import { Snippet } from "@/types";
 import Profile from "./_components/Profile";
@@ -50,83 +51,126 @@ export default function Dashboard() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
-  const { data: session, status } =  useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
-
 
   // const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [showApiKey, setShowApiKey] = useState(false);
-  const setUser = useSetRecoilState<userAtom>(userAtom)
-  const [ snippets , setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
+  const setUser = useSetRecoilState<userAtom>(userAtom);
+  const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredSnippets = snippets.filter(snippet => {
-    const matchesSearch = 
+  const filteredSnippets = snippets.filter((snippet) => {
+    const matchesSearch =
       searchQuery === "" ||
       snippet.title.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
       snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       snippet.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       snippet.content.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch ;
+    return matchesSearch;
   });
-
 
   const toggleApiKeyVisibility = () => {
     setShowApiKey(!showApiKey);
   };
   useEffect(() => {
-    const status = searchParams.get('status');
-    if (status === 'oauth_success') {
+    const status = searchParams.get("status");
+    if (status === "oauth_success") {
       toast({
         title: "Account Connected",
         description: "Your account has been connected successfully",
       });
       const params = new URLSearchParams(searchParams);
-      params.delete('status');
+      params.delete("status");
 
       router.replace(`/dashboard?${params.toString()}`);
     }
   }, [searchParams]);
 
-
   useEffect(() => {
     console.log("Session:", session);
-    const fetchData = async () => {if (status === "authenticated" && session?.user?.userId) {
-      console.log("Session authenticated:", session);
-      
-      try {
-        const data = await getSnippetByUserId(session.user.userId);
-        const user = await getUserByUserId(session.user.userId);
-        if (user) {
-          setUser(user);
+    const fetchData = async () => {
+      if (status === "authenticated" && session?.user?.userId) {
+        console.log("Session authenticated:", session);
+
+        try {
+          const data = await getSnippetByUserId(session.user.userId);
+          const user = await getUserByUserId(session.user.userId);
+          if (user) {
+            setUser(user);
+          }
+          console.log("Data:", data);
+
+          setSnippets(data);
+        } catch (err) {
+          console.error("Fetch error:", err);
         }
-        console.log("Data:", data);
-
-        setSnippets(data);
-      } catch (err) {
-        console.error('Fetch error:', err);
+      } else {
+        console.log("Session not authenticated or missing userId");
       }
-    } else {
-      console.log("Session not authenticated or missing userId");
-    }
-  }
-  fetchData();
-
-  },[ session]);
-  const deleteAccount = async( )=>{
-    if(!session || !session.user.userId) {
+    };
+    fetchData();
+  }, [session]);
+  const deleteAccount = async () => {
+    if (!session || !session.user.userId) {
       console.error("Session not authenticated or missing userId");
       return;
-    };
-    console.log("Deleting Account")
-    await deleteUserbyId(session.user.userId).then(()=>{
-      console.log("Account Deleted")
-      toast({
-        title: "We will miss you `😢`",
-        description: "Your account has been deleted!",
+    }
+    console.log("Deleting Account");
+    await deleteUserbyId(session.user.userId)
+      .then(() => {
+        console.log("Account Deleted");
+        toast({
+          title: "We will miss you `😢`",
+          description: "Your account has been deleted!",
+        });
+        signOut();
+      })
+      .catch((err) => {
+        console.error(err);
       });
-      signOut();
-    }).catch((err)=>{console.error(err)});
-  }
+  };
+
+  const deleteSnippet = async (id: number) => {
+    if (!session || !session.user.userId) {
+      console.error("Session not authenticated or missing userId");
+      return;
+    }
+    const targetSnippet = snippets.find(
+      (snippet) => snippet.id === Number(id)
+    );
+    if(!targetSnippet){
+      return;
+    }
+    try {    
+      const newSnippets = snippets.filter(
+        (snippet) => snippet.id !== Number(id)
+      );
+      setSnippets(newSnippets);
+
+      await deleteSnippetbyId(Number(id))
+        .then(() => {
+          // toast({
+          //   title: "Success",
+          //   description: "Snippet deleted successfully",
+          // });
+        })
+        .catch((err) => {
+          snippets.push(targetSnippet);
+          console.error(err);
+          toast({
+            title: "Error",
+            description: "Failed to delete snippet",
+          });
+        });
+    } catch (err) {
+      snippets.push(targetSnippet);
+      console.error(err);
+      toast({
+        title: "Error",
+        description: "Failed to delete snippet",
+      });
+    }
+  };
 
   if (status === "loading") {
     // Show a loading spinner or message while the session is being fetched
@@ -138,7 +182,7 @@ export default function Dashboard() {
     signIn();
     return null; // Prevent rendering anything else while signing in
   }
-//bg-gradient-to-b from-[#1b1a1a] to-black
+  //bg-gradient-to-b from-[#1b1a1a] to-black
   return (
     <div className="min-h-screen bg-zinc-900">
       <nav className="border-b border-border">
@@ -210,38 +254,41 @@ export default function Dashboard() {
                         </Button>
                       </div>
                     </div> */}
-<div className="flex flex-row space-x-2">
-                    <Button
-                      variant="secondary"
-                      className="w-full"
-                      onClick={() => signOut()}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="w-full"
-                      onClick={() => deleteAccount()}
-                    >
-                      <Delete className="mr-2 h-4 w-4" />
-Delete Account                    </Button>
+                    <div className="flex flex-row space-x-2">
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => signOut()}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="w-full"
+                        onClick={() => deleteAccount()}
+                      >
+                        <Delete className="mr-2 h-4 w-4" />
+                        Delete Account{" "}
+                      </Button>
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
 
-              <Link href={"/integration/vscode"} target="blank"><Button >
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    New Snippet
-                  </Button></Link>
+              <Link href={"/integration/vscode"} target="blank">
+                <Button>
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  New Snippet
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Profile session={session}/>
+        <Profile session={session} />
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Your Snips</h1>
           <div className="relative">
@@ -255,34 +302,48 @@ Delete Account                    </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(searchQuery.length > 0 ? filteredSnippets : snippets).map((snippet) => (
-            <Link href={`/snippet/${snippet.id}`} key={snippet.id}>
-              <Card  className="overflow-hidden  bg-gradient-to-br from-[#2a2929] to-black group hover:border-primary/50 transition-colors">
+          {(searchQuery.length > 0 ? filteredSnippets : snippets).map(
+            (snippet) => (
+              <div className="relative group" key={snippet.id}>
+                <button
+                  onClick={() => deleteSnippet(snippet.id)}
+                  style={{ right: "2.5rem" }}
+                  className="absolute z-50 mt-1 right-8 p-2 rounded-full hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"
+                  aria-label="Delete snippet"
+                >
+                  <Trash2Icon className="h-5 w-5" />
+                </button>
 
-                <div className="relative">
-                  {/* <img src={snippet.image} alt={snippet.title} className="w-full h-48 object-cover" /> */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                </div>
-                <CardHeader className="relative">
-                <div className="absolute top-2" style={{right: "1rem"}} >
-                      <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Link href={`/snippet/${snippet.id}`} className="block">
+                  <Card className="overflow-hidden bg-gradient-to-br from-[#2a2929] to-black hover:border-primary/50 transition-colors">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                     </div>
-                  <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
-                    {snippet.title}{" "}
-                  </CardTitle>
-                  <CardDescription>{snippet.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-muted p-4 rounded-lg border shadow-sm overflow-hidden relative">
-                    <pre className="overflow-hidden h-24 max-h-24">
-                      <code className="text-sm">{snippet.content}</code>
-                    </pre>
-                    <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-muted to-transparent" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                    <CardHeader className="relative">
+                      <div
+                        className="absolute z-50 top-3"
+                        style={{ right: "1rem" }}
+                      >
+                        <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                      <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
+                        {snippet.title}
+                      </CardTitle>
+                      <CardDescription>{snippet.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="bg-muted p-4 rounded-lg border shadow-sm overflow-hidden relative">
+                        <pre className="overflow-hidden h-24 max-h-24">
+                          <code className="text-sm">{snippet.content}</code>
+                        </pre>
+                        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-muted to-transparent" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+            )
+          )}
         </div>
       </main>
     </div>

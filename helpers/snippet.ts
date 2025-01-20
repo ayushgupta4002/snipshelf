@@ -47,7 +47,7 @@ export async function updateSnippet(snippet : Snippet){
   });
 }
 
-export async function deleteSnippet(snipId : number){
+export async function deleteSnippetbyId(snipId : number){
   return await prisma.snippet.delete({
     where: {
       id: snipId,
