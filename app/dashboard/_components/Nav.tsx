@@ -49,7 +49,7 @@ function Nav() {
           <div className="flex items-center">
             <CodeIcon className="h-8 w-8 text-primary" />
             <span className="ml-2 text-2xl font-bold text-primary">
-              Snipit {session.user?.userId}
+              Snipshelf {session.user?.userId}
             </span>
           </div>
         </Link>

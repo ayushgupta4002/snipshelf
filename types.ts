@@ -8,4 +8,5 @@
     gistUrl: string | null;
     createdAt: Date;
     updatedAt: Date;
+    shareId : string | null;
   }

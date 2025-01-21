@@ -32,6 +32,7 @@ model Snippet {
   description String?
   gistId    String?
   gistUrl   String?
+  shareId   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

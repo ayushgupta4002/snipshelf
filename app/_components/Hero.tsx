@@ -8,7 +8,7 @@ import Link from "next/link";
 export function FeaturesSectionDemo() {
   const features = [
     {
-      title: "Manage Snipits effectively",
+      title: "Manage Snipshelfs effectively",
       description:
         "Track and manage your project issues with ease using our intuitive interface.",
       skeleton: <SkeletonOne />,
@@ -23,7 +23,7 @@ export function FeaturesSectionDemo() {
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "Push your snippets within seconds",
+      title: "Manage Snipshelfs effectively",
       description:
         "Whether its you or Tyler Durden, you can get to know about our product on YouTube",
       skeleton: <SkeletonThree />,
@@ -39,7 +39,7 @@ export function FeaturesSectionDemo() {
     },
   ];
   return (
-    <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
+    <div className="relative z-20 py-5 lg:py-15 max-w-7xl mx-auto">
       {/* <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
           Packed with thousands of features
@@ -105,7 +105,15 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
 export const SkeletonOne = () => {
   return (
     <div className="relative flex py-8 px-2 gap-10 h-full">
-      <div className="w-full  p-5  mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
+      <div className="w-full  p-5  mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-fit">
+      <Image
+            src="/editPage.png"
+            alt="header"
+            width={600}
+            height={600}
+            className="w-full mt-6  object-center rounded-sm  transition-all duration-200"
+          />
+
         {/* <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
           <Image
             src="/linear.webp"
@@ -118,32 +126,45 @@ export const SkeletonOne = () => {
       </div>
 
       {/* <div className="absolute bottom-0 z-40 inset-x-0 h-60 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
-      <div className="absolute top-0 z-40 inset-x-0 h-60 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" /> */}
+      // <div className="absolute top-0 z-40 inset-x-0 h-60 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" /> */}
     </div>
   );
 };
 
 export const SkeletonThree = () => {
   return (
-    <Link
-      href="https://www.youtube.com/watch?v=RPa3_AD1_Vs"
-      target="__blank"
+    <div
       className="relative flex gap-10  h-full group/image"
     >
       <div className="w-full  mx-auto bg-transparent dark:bg-transparent group h-full">
         <div className="flex flex-1 w-full h-full flex-col space-y-2  relative">
+        <Image
+            src="/vscode.png"
+            alt="header"
+            width={600}
+            height={600}
+            className="w-full mt-6  object-center rounded-sm  transition-all duration-200"
+          />
+          {/* <Image
+            src="/dashboard.png"
+            alt="header"
+            width={600}
+            height={600}
+            className="w-full   object-center rounded-sm  transition-all duration-200"
+          /> */}
+
           {/* TODO */}
           {/* <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " /> */}
-          <Image
+          {/* <Image
             src="https://assets.aceternity.com/fireship.jpg"
             alt="header"
             width={800}
             height={800}
             className="h-full w-full aspect-square object-cover object-center rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
-          />
+          /> */}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -175,26 +196,14 @@ export const SkeletonTwo = () => {
        
       </div>
       <div className="flex flex-row">
-        {/* {images.map((image, idx) => (
-          <motion.div
-            key={"images-second" + idx}
-            style={{
-              rotate: Math.random() * 20 - 10,
-            }}
-            variants={imageVariants}
-            whileHover="whileHover"
-            whileTap="whileTap"
-            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 flex-shrink-0 overflow-hidden"
-          >
-            <Image
-              src={image}
-              alt="bali images"
-              width="500"
-              height="500"
-              className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
-            />
-          </motion.div>
-        ))} */}
+      <Image
+            src="/github.png"
+            alt="header"
+            width={600}
+            height={600}
+            className="h-full w-full aspect-square object-cover object-center rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
+          />
+
       </div>
 
       <div className="absolute left-0 z-[100] inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent  h-full pointer-events-none" />

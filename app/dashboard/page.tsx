@@ -59,6 +59,7 @@ export default function Dashboard() {
   const setUser = useSetRecoilState<userAtom>(userAtom);
   const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const [searchQuery, setSearchQuery] = useState("");
+  const[loading , setLoading] = useState(false);
   const filteredSnippets = snippets.filter((snippet) => {
     const matchesSearch =
       searchQuery === "" ||
@@ -91,8 +92,9 @@ export default function Dashboard() {
     const fetchData = async () => {
       if (status === "authenticated" && session?.user?.userId) {
         console.log("Session authenticated:", session);
-
+        // if(snippets.length >0 ){setLoading(true)}
         try {
+
           const data = await getSnippetByUserId(session.user.userId);
           const user = await getUserByUserId(session.user.userId);
           if (user) {
@@ -103,9 +105,12 @@ export default function Dashboard() {
           setSnippets(data);
         } catch (err) {
           console.error("Fetch error:", err);
+        }finally{
+          setLoading(false);
         }
       } else {
         console.log("Session not authenticated or missing userId");
+        setLoading(false);
       }
     };
     fetchData();
@@ -172,6 +177,10 @@ export default function Dashboard() {
     }
   };
 
+  if(loading){
+    return <Loader />
+  }
+
   if (status === "loading") {
     // Show a loading spinner or message while the session is being fetched
     return <Loader />;
@@ -193,7 +202,7 @@ export default function Dashboard() {
               <div className="flex items-center">
                 <CodeIcon className="h-8 w-8 text-primary" />
                 <span className="ml-2 text-2xl font-bold text-primary">
-                  Snipit
+                  Snipshelf
                 </span>
               </div>
             </Link>
@@ -329,9 +338,12 @@ export default function Dashboard() {
                       <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
                         {snippet.title}
                       </CardTitle>
-                      <CardDescription>{snippet.description}</CardDescription>
+                      <CardDescription className="h-10 ">
+                        {snippet.description?.substring(0, 120)}
+                        {snippet.description && snippet.description.length > 120 ? "..." : ""}
+                      </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="mt-2">
                       <div className="bg-muted p-4 rounded-lg border shadow-sm overflow-hidden relative">
                         <pre className="overflow-hidden h-24 max-h-24">
                           <code className="text-sm">{snippet.content}</code>

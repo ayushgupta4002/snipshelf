@@ -5,6 +5,8 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FeaturesSectionDemo } from "./_components/Hero";
 import { Card } from "@/components/ui/card";
+import Footer from "./_components/Footer";
+import Image from "next/image";
 
 export default function Home() {
   const {data : session} = useSession();
@@ -16,18 +18,19 @@ export default function Home() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <CodeIcon className="h-8 w-8 text-primary" />
-              <span className="ml-2 text-2xl font-bold text-primary">Snipit</span>
+              <span className="ml-2 text-2xl font-bold text-primary">Snipshelf</span>
             </div>
             <div>
                 {session && session.user ? <Link href={"/dashboard"}><Button variant="secondary">Dashboard</Button></Link> : <><Button variant="secondary" onClick={()=>signIn()}>SignIn</Button></>}
             </div>
           </div>
+        
         </div>
       </nav>
 
       <main className="h-[92vh] flex flex-col justify-center">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-25">
-          <div className="text-left">
+          <div className="text-left sm:mt-8">
             <h1 className="text-6xl font-bold tracking-tight text-primary mb-6">
               Your Personal Code Snippet Library
             </h1>
@@ -73,7 +76,7 @@ export default function Home() {
           </div> */}
         </div>
       </main>
-      <Card className="w-full max-w-md bg-white/10 backdrop-blur-xl border-white/20 relative overflow-hidden">
+      <Card className="w-full max-w-full rounded-none bg-white/10 backdrop-blur-xl border-white/20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-black-500/10" />
         <div className="relative p-4">
           <div className="flex justify-center mb-8">
@@ -83,20 +86,27 @@ export default function Home() {
           </div>
 
           <h1 className="text-3xl font-bold text-center text-white mb-2">
-            Welcome to Snipit
+          Save.Share.Reuse
+         
           </h1>
-          <p className="text-center text-slate-300 mb-8">
-            Your personal code snippet library
-          </p>
-
+          <p className="text-center text-slate-300 mb-2">
+          Your go-to solution for effortlessly managing and reusing your coding components </p>
+          <Image
+                      src="/oink1.png"
+                      alt="header"
+                      width={600}
+                      height={600}
+                      className="w-[80%] mx-auto object-center rounded-sm  transition-all duration-200"
+                    />
        
-          <div className="mt-8 flex items-center gap-2 justify-center text-slate-400">
+          <div className="mt-2 flex items-center gap-2 justify-center text-slate-400">
             <Terminal className="w-4 h-4" />
-            <p className="text-sm">Access your snippets anywhere</p>
+            <p className="text-sm">Access your snippets anywhere.</p>
           </div>
         </div>
       </Card>
       <FeaturesSectionDemo />
+      <Footer/>
     </div>
   );
 }

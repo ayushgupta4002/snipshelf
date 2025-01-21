@@ -17,6 +17,7 @@ export interface snippetAtom {
   description: string | null;
   gistId: string | null;
   gistUrl: string | null;
+  shareId : string | null;
   createdAt: Date;
   updatedAt: Date;
 }

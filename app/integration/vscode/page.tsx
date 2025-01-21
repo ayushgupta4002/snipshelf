@@ -21,7 +21,7 @@ export default function Home() {
             <div className="p-3 bg-primary/10 rounded-full">
               <Code2 className="h-16 w-16 text-primary" />
             </div>
-            <h1 className="text-5xl font-bold tracking-tight">Snipit for VSCode</h1>
+            <h1 className="text-5xl font-bold tracking-tight">Snipshelf for VSCode</h1>
             <p className="text-xl text-muted-foreground max-w-2xl">
               Boost your productivity with reusable code snippets. Save, organize, and reuse your code efficiently.
             </p>
@@ -70,12 +70,12 @@ export default function Home() {
                   <Terminal className="h-8 w-8 text-primary" />
                   Installation
                 </h2>
-                <p className="text-muted-foreground text-lg">Get started with Snipit in just a few steps.</p>
+                <p className="text-muted-foreground text-lg">Get started with Snipshelf in just a few steps.</p>
               </div>
               <div className="bg-card rounded-xl p-8 shadow-lg border border-border/100">
                 <div className="prose prose-invert max-w-none">
                   <p className="text-card-foreground text-lg mb-6">
-                    Install Snipit directly from VSCode's extension marketplace:
+                    Install Snipshelf directly from VSCode's extension marketplace:
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 text-muted-foreground">
@@ -97,7 +97,7 @@ export default function Home() {
                   <Command className="h-8 w-8 text-primary" />
                   Setup
                 </h2>
-                <p className="text-muted-foreground text-lg">Configure Snipit with your API key to get started.</p>
+                <p className="text-muted-foreground text-lg">Configure Snipshelf with your API key to get started.</p>
               </div>
               <div className="bg-card rounded-xl p-8 shadow-lg border border-border/100">
                 <div className="space-y-8">
@@ -111,7 +111,7 @@ export default function Home() {
                         text: 'Type your API Key and Press Enter',
                       },
                       {
-                        text: 'Congratulations! You are now ready to use Snipit!',
+                        text: 'Congratulations! You are now ready to use Snipshelf!',
                         icon: <CheckCircle className="h-5 w-5 text-green-500" />,
                       },
                     ].map((step, index) => (

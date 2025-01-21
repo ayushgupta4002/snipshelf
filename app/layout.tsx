@@ -11,7 +11,7 @@ import {
 const inter = Inter({ subsets: ['latin'] });
 
 // export const metadata: Metadata = {
-//   title: 'Snipit - Your Code Snippet Shelf',
+//   title: 'Snipshelf - Your Code Snippet Shelf',
 //   description: 'Store and manage your code snippets with ease',
 // };
 
