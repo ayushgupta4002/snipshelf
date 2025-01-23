@@ -1,51 +1,42 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
+import { deleteSnippetbyId, getSnippetByUserId } from "@/helpers/snippet";
 import {
   CodeIcon,
+  Delete,
+  ExternalLinkIcon,
+  LogOut,
   PlusIcon,
   SearchIcon,
-  ExternalLinkIcon,
-  EyeOff,
-  Eye,
-  LogOut,
-  Delete,
-  Trash2Icon,
+  Trash2Icon
 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import Loader from "../_components/Loader";
-import { deleteSnippetbyId, getSnippetByUserId } from "@/helpers/snippet";
 
-import { Snippet } from "@/types";
-import Profile from "./_components/Profile";
 import { deleteUserbyId, getUserByUserId } from "@/helpers/users";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { snippetAtom, userAtom } from "../atom";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { snippetAtom, userAtom } from "../atom";
+import Profile from "./_components/Profile";
 
 export default function Dashboard() {
   const { toast } = useToast();

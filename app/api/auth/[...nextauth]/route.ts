@@ -1,10 +1,5 @@
-import { createUser, transferGuestUser } from "@/helpers/users";
-import prisma from "@/lib/prisma";
-import NextAuth, { DefaultSession, AuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { getSession } from "next-auth/react";
 import { authOptions } from "@/app/authoptions/authoptions";
+import NextAuth from "next-auth";
 
 // declare module "next-auth" {
 //   interface Session {
@@ -171,3 +166,4 @@ import { authOptions } from "@/app/authoptions/authoptions";
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+

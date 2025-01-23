@@ -1,8 +1,8 @@
 import { createUser, transferGuestUser } from "@/helpers/users";
 import prisma from "@/lib/prisma";
-import NextAuth, { DefaultSession, AuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { AuthOptions, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { getSession } from "next-auth/react";
 
 declare module "next-auth" {

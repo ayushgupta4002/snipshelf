@@ -1,21 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 //todo ^^^^ remove this and solve warnings
 
-import React, { use, useState } from "react";
-import {
-  Github,
-  Key,
-  Eye,
-  EyeOff,
-  RefreshCw,
-  CheckCircleIcon,
-} from "lucide-react";
-import { SessionOptions } from "next-auth";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "@/app/atom";
-import Link from "next/link";
-import { updateUser } from "@/helpers/users";
-import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
   TooltipContent,
@@ -23,8 +9,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { generateAPIToken } from "@/helpers/generateAPItoken";
-import { signIn } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import { updateUser } from "@/helpers/users";
+import { useToast } from "@/hooks/use-toast";
+import {
+  CheckCircleIcon,
+  Eye,
+  EyeOff,
+  Github,
+  Key,
+  RefreshCw,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useRecoilState } from "recoil";
 
 const Profile = ({ session }: { session: any }) => {
   const [showApiKey, setShowApiKey] = useState(false);
