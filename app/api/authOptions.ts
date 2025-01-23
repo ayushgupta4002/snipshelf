@@ -1,1 +1,1 @@
-export { authOptions } from './auth/[...nextauth]/route'
+export { authOptions } from '../authoptions/authoptions';

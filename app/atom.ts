@@ -7,6 +7,7 @@ export interface userAtom {
   name: string | null;
   apiKey: string;
   githubToken: string | null;
+  isGuest?: boolean;
 }
 
 export interface snippetAtom {

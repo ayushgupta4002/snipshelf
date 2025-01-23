@@ -152,7 +152,7 @@ export default function Dashboard() {
       );
       setSnippets(newSnippets);
 
-      await deleteSnippetbyId(Number(id))
+      await deleteSnippetbyId(Number(id), session.user.userId)
         .then(() => {
           // toast({
           //   title: "Success",
@@ -221,7 +221,7 @@ export default function Dashboard() {
                         Name
                       </label>
                       <Input
-                        value={session.user?.name}
+                        value={session.user?.name ??""}
                         readOnly
                         className="w-full"
                       />
@@ -232,7 +232,7 @@ export default function Dashboard() {
                         Email
                       </label>
                       <Input
-                        value={session.user?.email}
+                        value={session.user?.email ?? ""}
                         readOnly
                         className="w-full"
                       />

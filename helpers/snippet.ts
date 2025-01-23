@@ -121,3 +121,14 @@ export async function deleteShareLink({
     },
   });
 }
+
+
+
+export async function verifyAPIkey({ apiKey }: { apiKey: string }) {
+  return await prisma.user.findFirst({
+    where: {
+      apiKey: apiKey,
+    },
+  });
+
+}
