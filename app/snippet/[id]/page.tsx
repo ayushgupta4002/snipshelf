@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import Loader from "@/app/_components/Loader";
 import { signIn, useSession } from "next-auth/react";
 import {
+  deleteShareLink,
   deleteSnippetbyId,
   getShareLink,
   getSnippetByShareId,
@@ -338,6 +339,38 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     }
   };
 
+
+  const deleteSnippetShareLink = async (id: number) => {
+    if (!session || !session.user.userId) {
+      console.error("Session not authenticated or missing userId");
+      return;
+    }
+
+    try {
+      await deleteShareLink({ snipId: Number(id), userId: session.user.userId })
+        .then(() => {
+          setSnippet({ ...snippet, shareId: "" });
+          toast({
+            title: "Success",
+            description: "Link deleted successfully",
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          toast({
+            title: "Error",
+            description: "Failed to delete link",
+          });
+        });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error",
+        description: "Failed to delete link",
+      });
+    }
+  }
+
   if (status === "loading" || Loading) {
     return <Loader />;
   }
@@ -452,8 +485,8 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                                 Close
                               </Button>
                             </DialogClose>
-                            <Button type="button" variant="secondary">
-                              Close
+                            <Button onClick={()=>{deleteSnippetShareLink(snippet.id)}} type="button" variant="secondary">
+                              Delete Link
                             </Button>
                           </DialogFooter>
                         </>

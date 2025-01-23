@@ -28,7 +28,7 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="h-[92vh] flex flex-col justify-center">
+      <main className="h-[92vh] mt-5 flex flex-col justify-center">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-25">
           <div className="text-left sm:mt-8">
             <h1 className="text-6xl font-bold tracking-tight text-primary mb-6">

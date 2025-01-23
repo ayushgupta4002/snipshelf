@@ -1,9 +1,19 @@
-"use server"
+"use server";
 
 import prisma from "@/lib/prisma";
 import { Snippet } from "@/types";
 
-export async function createSnippet({ title, content, description, userId }: { title: string; content: string; description: string; userId: number }) {
+export async function createSnippet({
+  title,
+  content,
+  description,
+  userId,
+}: {
+  title: string;
+  content: string;
+  description: string;
+  userId: number;
+}) {
   // Create snippet
   await prisma.snippet.create({
     data: {
@@ -15,30 +25,34 @@ export async function createSnippet({ title, content, description, userId }: { t
   });
 }
 
-
 export async function getSnippetByUserId(id: number) {
-    return await prisma.snippet.findMany({
-        where: {
-        userId: id,
-        },
-    });
+  return await prisma.snippet.findMany({
+    where: {
+      userId: id,
+    },
+  });
 }
 
-export async function getSnippetBySnipId({snipId ,userId}:{snipId : number , userId : number}) {
+export async function getSnippetBySnipId({
+  snipId,
+  userId,
+}: {
+  snipId: number;
+  userId: number;
+}) {
   return await prisma.snippet.findFirst({
-    where:{
+    where: {
       id: snipId,
-      userId : userId
-    }
-  })
+      userId: userId,
+    },
+  });
 }
 
-
-export async function updateSnippet(snippet : Snippet , userId : number){
+export async function updateSnippet(snippet: Snippet, userId: number) {
   return await prisma.snippet.update({
     where: {
       id: snippet.id,
-      userId : userId 
+      userId: userId,
     },
     data: {
       title: snippet.title,
@@ -48,33 +62,62 @@ export async function updateSnippet(snippet : Snippet , userId : number){
   });
 }
 
-export async function deleteSnippetbyId(snipId : number , userId : number){
+export async function deleteSnippetbyId(snipId: number, userId: number) {
   return await prisma.snippet.delete({
     where: {
       id: snipId,
-      userId : userId
+      userId: userId,
     },
   });
 }
 
-export async function getShareLink({snipId ,userId}:{snipId : number , userId : number}){
+export async function getShareLink({
+  snipId,
+  userId,
+}: {
+  snipId: number;
+  userId: number;
+}) {
   return await prisma.snippet.update({
     where: {
       id: snipId,
-      userId : userId
+      userId: userId,
     },
     data: {
       shareId: Math.random().toString(36).substring(7),
     },
   });
-  
 }
 
-export async function getSnippetByShareId({snipId ,shareId}:{snipId : number , shareId : string}){
+export async function getSnippetByShareId({
+  snipId,
+  shareId,
+}: {
+  snipId: number;
+  shareId: string;
+}) {
   return await prisma.snippet.findFirst({
-    where:{
+    where: {
       shareId: shareId,
-      id: snipId
-    }
-  })
+      id: snipId,
+    },
+  });
+}
+
+export async function deleteShareLink({
+  snipId,
+  userId,
+}: {
+  snipId: number;
+  userId: number;
+}) {
+  return await prisma.snippet.update({
+    where: {
+      id: snipId,
+      userId: userId,
+    },
+    data: {
+      shareId: null,
+    },
+  });
 }

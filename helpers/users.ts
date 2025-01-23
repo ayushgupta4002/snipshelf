@@ -24,6 +24,7 @@ const data =[
 ]
 
 export async function createUser({name, email, isGuest}: {name: string, email: string , isGuest?: boolean}) {
+  console.log("Creating user with name: ", name, " and email: ", email);
   // Create user
  const user= await prisma.user.create({
     data: {
@@ -70,4 +71,21 @@ export async function updateUser(user : User){
     data: user
     
   });
+}
+
+
+
+export async function transferGuestUser({id , email , name }: {id: number, email: string , name: string}) {
+  const user = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name: name,
+      email: email,
+      isGuest: false
+    },
+  });
+  return user;
+  
 }

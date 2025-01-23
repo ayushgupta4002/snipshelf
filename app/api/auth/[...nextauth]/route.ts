@@ -1,15 +1,16 @@
-import { createUser } from "@/helpers/users";
+import { createUser, transferGuestUser } from "@/helpers/users";
 import prisma from "@/lib/prisma";
 import NextAuth, { DefaultSession, AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { getSession } from "next-auth/react";
 
 declare module "next-auth" {
   interface Session {
     user: {
       userId?: number;
       isGuest?: boolean;
-    } & DefaultSession["user"]
+    } & DefaultSession["user"];
   }
 
   interface User {
@@ -39,15 +40,19 @@ export const authOptions: AuthOptions = {
         const user = {
           id: `guest-${Date.now()}`,
           name: "Guest User",
-          //TODO : change domain from example.com to our domain later 
+          //TODO : change domain from example.com to our domain later
           email: `guest-${Date.now()}@example.com`,
           isGuest: true,
         };
-        
+
         try {
           // Create a temporary guest user in the database
-          const dbUser = await createUser({ name: user.name, email: user.email , isGuest: user.isGuest });
-          
+          const dbUser = await createUser({
+            name: user.name,
+            email: user.email,
+            isGuest: user.isGuest,
+          });
+
           return {
             ...user,
             userId: dbUser.id,
@@ -66,10 +71,10 @@ export const authOptions: AuthOptions = {
   debug: true,
   callbacks: {
     async signIn({ user, account, profile }) {
-          // Skip database check for guest users
-          if (user.isGuest) {
-            return true;
-          }
+      // Skip database check for guest users
+      if (user.isGuest) {
+        return true;
+      }
       const email = user.email;
       const image = user.image;
       const name = user.name;
@@ -79,18 +84,37 @@ export const authOptions: AuthOptions = {
         if (!email) {
           return false;
         }
+        const session = await getSession();
+        const guestUserId = session?.user?.userId;
+        const isCurrentlyGuest = session?.user?.isGuest;
 
         const userExist = await prisma.user.findUnique({
           where: {
             email: email,
           },
         });
+        if (userExist) {
+          throw new Error("User with this email already exists");
+        }
+        console.log("User exist:", userExist);
+        console.log("Guest user id:", guestUserId);
+        console.log("Is currently guest:", isCurrentlyGuest);
 
-        if (!userExist) {
-          if (name && email) {
-            await createUser({ name, email });
+        if (isCurrentlyGuest && guestUserId && !userExist) {
+          // in case user is converting from guest to registered user
+          if (email && name) {
+            await transferGuestUser({ id: guestUserId, email, name });
           } else {
-            throw new Error("Name or email is missing");
+            throw new Error("Email or name is missing");
+          }
+        } else {
+          // in case new user is signing up
+          if (!userExist) {
+            if (name && email) {
+              await createUser({ name, email });
+            } else {
+              throw new Error("Name or email is missing");
+            }
           }
         }
       } catch (error) {
@@ -139,12 +163,10 @@ export const authOptions: AuthOptions = {
     },
   },
   pages: {
-    signIn: '/signin',
+    signIn: "/signin",
   },
 };
 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-

@@ -23,6 +23,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { generateAPIToken } from "@/helpers/generateAPItoken";
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 const Profile = ({ session }: { session: any }) => {
   const [showApiKey, setShowApiKey] = useState(false);
@@ -74,6 +76,7 @@ const Profile = ({ session }: { session: any }) => {
                 {session.user?.email}
               </p>
             </div>
+           
             <Link href={"/api/github/oauthGithub"}>
                 <TooltipProvider>
                   <Tooltip>

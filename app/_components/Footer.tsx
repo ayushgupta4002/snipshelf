@@ -42,7 +42,7 @@ const Footer = () => {
               <Heart className="w-4 h-4 mx-1.5 text-red-400 hover:text-red-300 fill-current animate-pulse" />
               <span className="text-zinc-400">by</span>
               <a 
-                href="https://github.com/crazysage" 
+                href="https://x.com/Ayush3241" 
                 className="ml-1.5 text-gray-300 hover:text-white transition-colors font-display font-medium tracking-wide"
               >
                 crazysage
