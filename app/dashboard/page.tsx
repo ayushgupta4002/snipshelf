@@ -10,7 +10,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 
 import {
   Dialog,
@@ -38,7 +38,15 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { snippetAtom, userAtom } from "../atom";
 import Profile from "./_components/Profile";
 
-export default function Dashboard() {
+export default function DashboardWrapper() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Dashboard />
+    </Suspense>
+  );
+}
+
+function Dashboard() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
