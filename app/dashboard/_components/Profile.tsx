@@ -126,17 +126,23 @@ const Profile = ({ session }: { session: any }) => {
                 className="p-1 hover:bg-zinc-800 rounded transition flex-shrink-0"
                 title={showApiKey ? "Hide API Key" : "Show API Key"}
               >
+
                 {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-
+<div className="flex flex-row items-center space-x-2"> 
             <button
               onClick={generateNewApiKey}
               className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md text-sm transition w-full sm:w-auto justify-center"
             >
               <RefreshCw size={14} />
               <span>Generate New API Key</span>
+              
             </button>
+            <Link href={`/integration/vscode#installation`} className="text-xs underline underline-offset-2 cursor-pointer">How to use this key?</Link>
+
+            </div>
+            
           </div>
         </div>
       </div>

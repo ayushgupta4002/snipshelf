@@ -7,30 +7,30 @@ export function FeaturesSectionDemo() {
     {
       title: "Manage Snipshelf effectively",
       description:
-        "Track and manage your project issues with ease using our intuitive interface.",
+        "Keep all your code snippets organized, editable, and accessible in one unified platform—never lose track of your code again",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
     },
     {
-      title: "Connect to Github Gists",
+      title: "One-Click connection to Github",
       description:
-        "Capture stunning photos effortlessly using our advanced AI technology.",
+        "Instantly sync your snippets with GitHub Gists, ensuring your code is always up-to-date and ready to share or reuse.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "Manage Snipshelf effectively",
+      title: "Integrate as VS Code Extension ",
       description:
-        "Whether its you or Tyler Durden, you can get to know about our product on YouTube",
+        "Instantly push snippets from your local repository to SnipShelf or pull updated snippets into your IDE. With just a single command, maintain a synchronized and uninterrupted workflow.",
       skeleton: <SkeletonThree />,
       className:
         "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
     },
     {
-      title: "Deploy in seconds",
+      title: "Secure Link Sharing",
       description:
-        "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
+       "Generate secure, uneditable links to share your snippets with peers, clients, or communities, ensuring your original work remains intact.",
       skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3 border-b lg:border-none",
     },
@@ -91,7 +91,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
       className={cn(
         "text-sm md:text-base  max-w-4xl text-left mx-auto",
         "text-neutral-500 text-center font-normal dark:text-neutral-300",
-        "text-left max-w-sm mx-0 md:text-sm my-2"
+        "text-left max-w-xl mx-0 md:text-sm my-2"
       )}
     >
       {children}

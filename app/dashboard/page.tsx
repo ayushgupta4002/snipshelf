@@ -92,8 +92,11 @@ function Dashboard() {
       if (status === "authenticated" && session?.user?.userId) {
         console.log("Session authenticated:", session);
         // if(snippets.length >0 ){setLoading(true)}
+        if(snippets.length>0){
+          return;
+        }
         try {
-
+setLoading(true);
           const data = await getSnippetByUserId(session.user.userId);
           const user = await getUserByUserId(session.user.userId);
           if (user) {
@@ -114,6 +117,8 @@ function Dashboard() {
     };
     fetchData();
   }, [session]);
+
+
   const deleteAccount = async () => {
     if (!session || !session.user.userId) {
       console.error("Session not authenticated or missing userId");
@@ -290,7 +295,7 @@ function Dashboard() {
                   New Snippet
                 </Button>
               </Link>
-              <Button
+             { session.user.isGuest && <Button
             variant="outline"
             className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-sm border-white/20 text-white hover:text-white transition-all duration-300"
             onClick={() => signIn("google")}
@@ -316,7 +321,7 @@ function Dashboard() {
               </svg>
               Sign in with Google
             </div>
-          </Button>
+          </Button>}
             </div>
           </div>
         </div>
@@ -350,7 +355,7 @@ function Dashboard() {
                 </button>
 
                 <Link href={`/snippet/${snippet.id}`} className="block">
-                  <Card className="overflow-hidden bg-gradient-to-br from-[#2a2929] to-black hover:border-primary/50 transition-colors">
+                  <Card className="overflow-hidden cursor-pointer bg-gradient-to-br from-[#2a2929] to-black hover:border-primary/50 transition-colors">
                     <div className="relative">
                       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                     </div>

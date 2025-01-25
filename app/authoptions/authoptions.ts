@@ -94,7 +94,7 @@ export const authOptions: AuthOptions = {
           },
         });
         if (userExist) {
-          throw new Error("User with this email already exists");
+          return true;
         }
         console.log("User exist:", userExist);
         console.log("Guest user id:", guestUserId);

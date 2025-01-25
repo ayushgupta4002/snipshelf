@@ -75,7 +75,7 @@ export default function Home() {
               <div className="bg-card rounded-xl p-8 shadow-lg border border-border/100">
                 <div className="prose prose-invert max-w-none">
                   <p className="text-card-foreground text-lg mb-6">
-                    Install Snipshelf directly from VSCode's extension marketplace:
+                    Install Snipshelf directly from VSCode&apos;s extension marketplace:
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 text-muted-foreground">
@@ -84,7 +84,7 @@ export default function Home() {
                       <kbd className="px-2 py-1.5 bg-accent rounded text-sm">CMD + Shift + P</kbd>
                     </div>
                     <p>Type <code className="px-2 py-1 bg-primary/10 rounded text-primary">install</code></p>
-                    <p>Select "Extensions: Install Extension:Snip-it"</p>
+                    <p>Select &quot;Extensions: Install Extension:Snipshelf&quot;</p>
                   </div>
                 </div>
               </div>
