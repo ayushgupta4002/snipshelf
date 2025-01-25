@@ -713,7 +713,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Right Column - Code */}
-            <div className="bg-card rounded-lg border h-[60vh] border-zinc-100 overflow-hidden">
+            <div className="bg-card rounded-lg border h-[70vh] border-zinc-100 overflow-hidden">
               <div className="bg-muted p-4 border-b border-border/50 flex items-center justify-between">
                 <span className="text-sm font-medium">Code</span>
                 {/* <span className="text-xs text-muted-foreground">{snippet.language}</span> */}
@@ -727,9 +727,16 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="font-mono text-sm min-h-[500px] rounded-none border-0 resize-none"
                 />
               ) : (
-                <pre className="p-4 overflow-auto max-h-[500px]">
-                  <code className="text-sm font-mono">{snippet.content}</code>
-                </pre>
+                <pre className="relative overflow-auto max-h-[500px] text-sm font-mono">
+                <code className="block pr-4 pb-4 [counter-reset:line]">
+                  {snippet.content.split('\n').map((line, i) => (
+                    <div key={i} className="relative pl-12 hover:bg-slate-700">
+                      <span className="absolute left-0 w-8 bg-gray-800 h-full flex items-center justify-end pr-2 text-gray-600 select-none [counter-increment:line] before:content-[counter(line)]" />
+                      {line || '\n'}
+                    </div>
+                  ))}
+                </code>
+              </pre>
               )}
             </div>
           </div>
