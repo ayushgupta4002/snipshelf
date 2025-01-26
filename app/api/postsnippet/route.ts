@@ -18,9 +18,10 @@ export async function POST(request: Request) {
     }
 
     try{
-    await createSnippet({ title, content, description, userId });
+    await createSnippet({ title, content, description, userId: Number(userId) });
     }
     catch (error) {
+      
       return NextResponse.json({ error: 'Could not create Snippet' }, { status: 404 });
     }
 
