@@ -129,6 +129,10 @@ export async function verifyAPIkey({ apiKey }: { apiKey: string }) {
     where: {
       apiKey: apiKey,
     },
+    select:{
+      id:true,
+      email:true,
+    }
   });
 
 }
