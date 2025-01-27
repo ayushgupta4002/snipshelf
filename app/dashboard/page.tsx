@@ -367,8 +367,8 @@ setLoading(true);
                         <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
-                        {snippet.title}
-                      </CardTitle>
+                      {snippet.title?.substring(0, 20)}
+                      {snippet.title && snippet.title.length > 20 ? ".." : ""}                      </CardTitle>
                       <CardDescription className="h-10 ">
                         {snippet.description?.substring(0, 120)}
                         {snippet.description && snippet.description.length > 120 ? "..." : ""}

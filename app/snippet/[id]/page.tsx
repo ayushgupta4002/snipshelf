@@ -398,7 +398,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="flex items-center text-muted-foreground hover:text-primary transition-colors"
                 >
                   <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                  Back to Dashboard
+                <span className="max-xs:hidden">  Back to Dashboard</span>
                 </Link>
               ) : (
                 <Link href={"/"}>
@@ -549,7 +549,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                 {isEditing ? (
                   <Button
                     onClick={handleSave}
-                    className="bg-primary hover:bg-primary/90"
+                    className="bg-primary max-[400px]:hidden hover:bg-primary/90"
                   >
                     <SaveIcon className="h-4 w-4 mr-2" />
                     Save Changes
@@ -560,7 +560,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                       setIsEditing(true);
                       setPrevSnippet(snippet);
                     }}
-                    className="bg-primary hover:bg-primary/90"
+                    className="bg-primary  max-[400px]:hidden hover:bg-primary/90"
                   >
                     Edit Snippet
                   </Button>
@@ -606,10 +606,10 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                     onChange={(e) =>
                       setSnippet({ ...snippet, title: e.target.value })
                     }
-                    className="text-3xl font-bold bg-background/50 backdrop-blur-sm border-primary/20 w-[600px]"
-                  />
+                    className="text-3xl break-words font-bold bg-background/50 backdrop-blur-sm border-primary/20 w-full max-w-md lg:max-w-lg"
+                    />
                 ) : (
-                  <h1 className="text-4xl font-bold text-primary">
+                  <h1 className="text-4xl break-all font-bold text-primary">
                     {snippet.title}
                   </h1>
                 )}

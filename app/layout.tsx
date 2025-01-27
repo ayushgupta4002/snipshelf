@@ -1,4 +1,3 @@
-"use client"
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -8,12 +7,15 @@ import { Toaster } from "@/components/ui/toaster"
 import {
   RecoilRoot,
 } from 'recoil';
+import ClientProviders from './ClientProvider';
 const inter = Inter({ subsets: ['latin'] });
 
-// export const metadata: Metadata = {
-//   title: 'Snipshelf - Your Code Snippet Shelf',
-//   description: 'Store and manage your code snippets with ease',
-// };
+export const metadata: Metadata = {
+  title: 'Snipshelf',
+  description: 'Give your code a shelf',
+  icons: [{ rel: 'icon', url: "/faviconPNG.png" }],
+
+};
 
 export default function RootLayout({
   children,
@@ -22,23 +24,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <RecoilRoot>
-      <body className={`${inter.className} dark`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          forcedTheme="dark"
-        >
-          <SessionProvider>
-          {children}
-          <Toaster />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
 
-
-          </SessionProvider>
-        </ThemeProvider>
-      </body>
-      </RecoilRoot>
-    </html>
+    <body className={`${inter.className} dark`}>
+      {/* Wrap the children with the client-side providers */}
+      <ClientProviders>{children}</ClientProviders>
+    </body>
+  </html>
   );
 }
