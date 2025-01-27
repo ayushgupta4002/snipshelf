@@ -289,7 +289,7 @@ setLoading(true);
                 </DialogContent>
               </Dialog>
 
-              <Link href={"/integration/vscode"} target="blank">
+              <Link href={"/integration/vscode"} className="hidden md:block" target="blank">
                 <Button>
                   <PlusIcon className="h-4 w-4 mr-2" />
                   New Snippet
@@ -329,7 +329,7 @@ setLoading(true);
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Profile session={session} />
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between max-xs:flex-col  space-y-2 items-center mb-8">
           <h1 className="text-3xl font-bold">Your Snips</h1>
           <div className="relative">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

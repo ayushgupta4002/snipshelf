@@ -713,7 +713,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Right Column - Code */}
-            <div className="bg-card rounded-lg border h-[70vh] border-zinc-100 overflow-hidden">
+            <div className="bg-card rounded-lg border min-h-fit max-h-[70vh] border-zinc-100 overflow-hidden">
               <div className="bg-muted p-4 border-b border-border/50 flex items-center justify-between">
                 <span className="text-sm font-medium">Code</span>
                 {/* <span className="text-xs text-muted-foreground">{snippet.language}</span> */}
