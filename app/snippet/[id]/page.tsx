@@ -46,11 +46,21 @@ import {
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { Check } from "lucide-react";
 
 export default function SnippetPage({ params }: { params: { id: string } }) {
   const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const thisSnippet = snippets.find((s) => s.id === Number(params.id));
   const [isEditing, setIsEditing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [shareCopy, setShareCopy] = useState(false);
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(snippet.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const [snippet, setSnippet] = useState<Snippet>(
     thisSnippet || {
       id: 0,
@@ -224,7 +234,13 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(snippet.content);
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL ?? ""}/snippet/${
+        snippet.id
+      }?shareId=${snippet.shareId}`
+    );
+    setShareCopy(true);
+    setTimeout(() => setShareCopy(false), 2000);
   };
   useEffect(() => {
     console.log("called");
@@ -339,7 +355,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     }
   };
 
-
   const deleteSnippetShareLink = async (id: number) => {
     if (!session || !session.user.userId) {
       console.error("Session not authenticated or missing userId");
@@ -369,7 +384,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
         description: "Failed to delete link",
       });
     }
-  }
+  };
 
   if (status === "loading" || Loading) {
     return <Loader />;
@@ -398,7 +413,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="flex items-center text-muted-foreground hover:text-primary transition-colors"
                 >
                   <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                <span className="max-xs:hidden">  Back to Dashboard</span>
+                  <span className="max-xs:hidden"> Back to Dashboard</span>
                 </Link>
               ) : (
                 <Link href={"/"}>
@@ -429,12 +444,14 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
-                        variant="outline"
-                        onClick={handleCopy}
-                        className="text-muted-foreground hover:text-primary"
+                        variant="default"
+                        // onClick={handleCopy}
+                        className="text-muted-foreground bg-transparent hover:bg-transparent hover:text-primary"
                       >
+                    
+
                         <ClipboardCopyIcon className="h-4 w-4 mr-2" />
-                        Share
+                        share
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
@@ -465,18 +482,13 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                               type="submit"
                               size="sm"
                               className="px-2"
-                              onClick={() => {
-                                navigator.clipboard.writeText(
-                                  `${
-                                    process.env.NEXT_PUBLIC_NEXTAUTH_URL ?? ""
-                                  }/snippet/${snippet.id}?shareId=${
-                                    snippet.shareId
-                                  }`
-                                );
-                              }}
+                              onClick={handleCopy}
                             >
-                              <span className="sr-only">Copy</span>
-                              <Copy size={20} />
+                              {shareCopy ? (
+                                <Check className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                           <DialogFooter className="sm:justify-start">
@@ -485,7 +497,13 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                                 Close
                               </Button>
                             </DialogClose>
-                            <Button onClick={()=>{deleteSnippetShareLink(snippet.id)}} type="button" variant="secondary">
+                            <Button
+                              onClick={() => {
+                                deleteSnippetShareLink(snippet.id);
+                              }}
+                              type="button"
+                              variant="secondary"
+                            >
                               Delete Link
                             </Button>
                           </DialogFooter>
@@ -607,7 +625,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                       setSnippet({ ...snippet, title: e.target.value })
                     }
                     className="text-3xl break-words font-bold bg-background/50 backdrop-blur-sm border-primary/20 w-full max-w-md lg:max-w-lg"
-                    />
+                  />
                 ) : (
                   <h1 className="text-4xl break-all font-bold text-primary">
                     {snippet.title}
@@ -713,10 +731,22 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Right Column - Code */}
-            <div className="bg-card rounded-lg border min-h-fit max-h-[70vh] border-zinc-100 overflow-hidden">
-              <div className="bg-muted p-4 border-b border-border/50 flex items-center justify-between">
-                <span className="text-sm font-medium">Code</span>
+            <div className="bg-card rounded-lg border h-fit max-h-[70vh] border-zinc-100 overflow-hidden">
+              <div className="bg-transparent p-4 border-b border-border/50 flex items-center justify-between">
+                <span className="text-sm font-medium">code</span>
                 {/* <span className="text-xs text-muted-foreground">{snippet.language}</span> */}
+
+                <Button
+                  variant="default"
+                  onClick={handleCopyCode}
+                  className="text-muted-foreground bg-transparent hover:bg-transparent rounded-full hover:text-primary"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 " />
+                  ) : (
+                    <Copy className="h-4 w-4 " />
+                  )}
+                </Button>
               </div>
               {isEditing ? (
                 <Textarea
@@ -727,16 +757,23 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="font-mono text-sm min-h-[500px] rounded-none border-0 resize-none"
                 />
               ) : (
-                <pre className="relative overflow-auto max-h-[500px] text-sm font-mono">
-                <code className="block pr-4 pb-4 [counter-reset:line]">
-                  {snippet.content.split('\n').map((line, i) => (
-                    <div key={i} className="relative pl-12 hover:bg-slate-700">
-                      <span className="absolute left-0 w-8 bg-gray-800 h-full flex items-center justify-end pr-2 text-gray-600 select-none [counter-increment:line] before:content-[counter(line)]" />
-                      {line || '\n'}
+                <pre className="relative overflow-auto max-h-[500px] text-sm font-mono pb-2">
+                  <code className="block pr-4  [counter-reset:line]">
+                    {snippet.content.split("\n").map((line, i) => (
+                      <div
+                        key={i}
+                        className="relative pl-12 hover:bg-slate-700"
+                      >
+                        <span className="absolute left-0 w-8 h-full flex items-center justify-end pr-2 text-yellow-100 select-none [counter-increment:line] before:content-[counter(line)]" />
+                        {line || "\n"}
+                      </div>
+                    ))}
+                    <div className="relative pl-12 hover:bg-slate-700">
+                      <span className="absolute left-0 w-8  h-full flex items-center justify-end pr-2 text-yellow-100  select-none [counter-increment:line] before:content-[counter(line)]" />
+                      {"\n"}
                     </div>
-                  ))}
-                </code>
-              </pre>
+                  </code>
+                </pre>
               )}
             </div>
           </div>
