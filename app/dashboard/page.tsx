@@ -211,7 +211,7 @@ setLoading(true);
   //bg-gradient-to-b from-[#1b1a1a] to-black
   return (
     <div className="min-h-screen bg-zinc-900">
-      <nav className="border-b border-border">
+      <nav className="border-b border-border bg-gradient-to-l from-[hsl(0,0%,13%)] to-zinc ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <Link href={"/"}>
