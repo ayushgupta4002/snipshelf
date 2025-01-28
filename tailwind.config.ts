@@ -25,6 +25,12 @@ const config: Config = {
       // => @media (min-width: 1280px) { ... }
     },
     extend: {
+      fontFamily: {
+        // 👇 Add CSS variables
+        font1: ["var(--font-font1)"],
+        font2: ["var(--font-font2)"],
+      },
+   
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -78,6 +84,16 @@ const config: Config = {
         },
       },
       keyframes: {
+        slidein: {
+          from: {
+            opacity: "0",
+            transform: "translateY(-10px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
         'accordion-down': {
           from: {
             height: '0',
@@ -98,6 +114,9 @@ const config: Config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        slidein300: "slidein 1s ease 300ms forwards",
+        slidein500: "slidein 1s ease 500ms forwards",
+        slidein700: "slidein 1s ease 700ms forwards",
       },
     },
   },

@@ -203,12 +203,14 @@ setLoading(true);
           <div className="flex justify-between h-16 items-center">
             <Link href={"/"}>
               {" "}
-              <div className="flex items-center">
-                <CodeIcon className="h-8 w-8 text-primary" />
-                <span className="ml-2 text-2xl font-bold text-primary">
-                  Snipshelf
-                </span>
-              </div>
+              <div className="flex items-center space-x-2 group">
+            <div className="p-2 rounded-full bg-zinc-600/90 group-hover:bg-zinc-400/80 transition-all duration-300">
+              <CodeIcon className="w-7 h-7 text-gray-200 group-hover:text-white transform rotate-12 group-hover:rotate-[-12] transition-all duration-300" />
+            </div>
+            <span className="text-3xl font-bold font-display bg-gradient-to-r from-gray-100 to-gray-300 text-transparent bg-clip-text">
+              Snipshelf
+            </span>
+          </div>
             </Link>
             <div className="flex items-center space-x-4">
               <Dialog>

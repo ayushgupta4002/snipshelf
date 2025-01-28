@@ -8,8 +8,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo Section */}
           <div className="flex items-center space-x-3 group">
-            <div className="p-2 rounded-lg bg-zinc-900/80 group-hover:bg-zinc-800/80 transition-all duration-300">
-              <CodeIcon className="w-6 h-6 text-gray-300 group-hover:text-white transform group-hover:rotate-12 transition-all duration-300" />
+          <div className="p-2 rounded-full bg-zinc-600/90 group-hover:bg-zinc-400/80 transition-all duration-300">
+              <CodeIcon className="w-6 h-6 text-gray-200 group-hover:text-white transform rotate-12 group-hover:rotate-[-12] transition-all duration-300" />
             </div>
             <span className="text-xl font-bold font-display bg-gradient-to-r from-gray-100 to-gray-300 text-transparent bg-clip-text">
               Snipshelf
