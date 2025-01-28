@@ -12,7 +12,9 @@ import { generateAPIToken } from "@/helpers/generateAPItoken";
 import { updateUser } from "@/helpers/users";
 import { useToast } from "@/hooks/use-toast";
 import {
+  Check,
   CheckCircleIcon,
+  Copy,
   Eye,
   EyeOff,
   Github,
@@ -23,7 +25,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 
-const Profile = ({ session }: { session: any }) => {
+const Profile = ({ session, handleCopy, apiCopy }: { session: any; handleCopy: () => void; apiCopy: boolean }) => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [user, setUser] = useRecoilState(userAtom);
   const { toast } = useToast();
@@ -73,21 +75,20 @@ const Profile = ({ session }: { session: any }) => {
                 {session.user?.email}
               </p>
             </div>
-           
+
             <Link href={"/api/github/oauthGithub"}>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
                     <div className="w-full sm:w-auto">
-                    <button className="flex items-center gap-2 px-2 py-2  bg-green-500 hover:bg-green-600 text-black rounded-md transition w-full justify-center group">
-                        {user?.githubToken  ? (
+                      <button className="flex items-center gap-2 px-2 py-2  bg-green-500 hover:bg-green-600 text-black rounded-md transition w-full justify-center group">
+                        {user?.githubToken ? (
                           <>
                             <CheckCircleIcon
                               size={18}
                               className="group-hover:rotate-12 transition-transform"
                             />
-                 <span>Connected to GitHub Gists</span>
-
+                            <span>Connected to GitHub Gists</span>
                           </>
                         ) : (
                           <>
@@ -100,22 +101,27 @@ const Profile = ({ session }: { session: any }) => {
                         )}
                       </button>
                       <p className="text-xs text-zinc-500 mt-1 text-center sm:text-right">
-                  Sync and backup your snippets to a GitHub Gists
-                </p>
-                      </div>
-
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {user?.githubToken ? <><div className="w-full sm:w-auto">Click to connect your github again.</div></> : <></>}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-               
+                        Sync and backup your snippets to a GitHub Gists
+                      </p>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {user?.githubToken ? (
+                      <>
+                        <div className="w-full sm:w-auto">
+                          Click to connect your github again.
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </Link>
           </div>
 
-          <div className="space-y-3 sm:space-y-2 mt-4">
+          <div className="space-y-3 max-sm:hidden sm:space-y-2 mt-4">
             <div className="flex items-center gap-2 text-zinc-400 justify-center sm:justify-start">
               <Key size={16} />
               <span className="font-mono text-sm break-all">
@@ -126,23 +132,32 @@ const Profile = ({ session }: { session: any }) => {
                 className="p-1 hover:bg-zinc-800 rounded transition flex-shrink-0"
                 title={showApiKey ? "Hide API Key" : "Show API Key"}
               >
-
                 {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
+              <button
+                onClick={() => {
+                  handleCopy();
+                }}
+                className="p-1 hover:bg-zinc-800 rounded transition flex-shrink-0"
+              >
+                {apiCopy ? <Check size={16} /> : <Copy size={16} />}
+              </button>
             </div>
-<div className="flex flex-row items-center space-x-2"> 
-            <button
-              onClick={generateNewApiKey}
-              className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md text-sm transition w-full sm:w-auto justify-center"
-            >
-              <RefreshCw size={14} />
-              <span>Generate New API Key</span>
-              
-            </button>
-            <Link href={`/integration/vscode#installation`} className="text-xs underline underline-offset-2 cursor-pointer">How to use this key?</Link>
-
+            <div className="flex flex-row items-center space-x-2">
+              <button
+                onClick={generateNewApiKey}
+                className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md text-sm transition w-full sm:w-auto justify-center"
+              >
+                <RefreshCw size={14} />
+                <span>Generate New API Key</span>
+              </button>
+              <Link
+                href={`/integration/vscode#installation`}
+                className="text-xs underline underline-offset-2 cursor-pointer"
+              >
+                How to use this key?
+              </Link>
             </div>
-            
           </div>
         </div>
       </div>

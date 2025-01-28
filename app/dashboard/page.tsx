@@ -25,7 +25,11 @@ import {
   LogOut,
   PlusIcon,
   SearchIcon,
-  Trash2Icon
+  EyeOff,
+  Eye,
+  Trash2Icon,
+  Check,
+  Copy
 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -55,7 +59,9 @@ function Dashboard() {
 
   // const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [showApiKey, setShowApiKey] = useState(false);
-  const setUser = useSetRecoilState<userAtom>(userAtom);
+  const [user, setUser] = useRecoilState<userAtom>(userAtom);
+  const[apiCopy , setApiCopy] = useState(false);
+
   const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const [searchQuery, setSearchQuery] = useState("");
   const[loading , setLoading] = useState(false);
@@ -117,7 +123,6 @@ setLoading(true);
     };
     fetchData();
   }, [session]);
-
 
   const deleteAccount = async () => {
     if (!session || !session.user.userId) {
@@ -195,6 +200,14 @@ setLoading(true);
     signIn();
     return null; // Prevent rendering anything else while signing in
   }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      user.apiKey
+    );
+    setApiCopy(true);
+    setTimeout(() => setApiCopy(false), 2000);
+  };
   //bg-gradient-to-b from-[#1b1a1a] to-black
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -244,14 +257,14 @@ setLoading(true);
                       />
                     </div>
 
-                    {/* <div className="space-y-2">
+                    <div className="space-y-2 sm:hidden">
                       <label className="text-sm font-medium text-gray-700">
                         API Key
                       </label>
                       <div className="flex gap-2">
                         <Input
                           type={showApiKey ? "text" : "password"}
-                          value={profileData.apiKey}
+                          value={user.apiKey}
                           readOnly
                           className="w-full font-mono"
                         />
@@ -267,8 +280,20 @@ setLoading(true);
                             <Eye className="h-4 w-4" />
                           )}
                         </Button>
+                        <Button
+                              type="submit"
+                              size="sm"
+                              className="px-2"
+                              onClick={handleCopy}
+                            >
+                              {apiCopy ? (
+                                <Check className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </Button>
                       </div>
-                    </div> */}
+                    </div>
                     <div className="flex flex-row space-x-2">
                       <Button
                         variant="secondary"
@@ -330,7 +355,7 @@ setLoading(true);
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Profile session={session} />
+        <Profile session={session} handleCopy={handleCopy} apiCopy={apiCopy} />
         <div className="flex justify-between max-xs:flex-col  space-y-2 items-center mb-8">
           <h1 className="text-3xl font-bold">Your Snips</h1>
           <div className="relative">
