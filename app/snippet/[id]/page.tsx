@@ -270,7 +270,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           console.error("Fetch error:", err);
         }
       } else {
-        
+
         console.log("Session not authenticated or missing userId");
       }
     };
@@ -771,7 +771,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                     ))}
                     <div className="relative pl-12 hover:bg-slate-700">
                       <span className="absolute left-0 w-8  h-full flex items-center justify-end pr-2 text-yellow-100  select-none [counter-increment:line] before:content-[counter(line)]" />
-                     
+                     {"\n"}
                     </div>
                   </code>
                 </pre>
