@@ -24,7 +24,7 @@ const data =[
 ]
 
 export async function createUser({name, email, isGuest}: {name: string, email: string , isGuest?: boolean}) {
-  console.log("Creating user with name: ", name, " and email: ", email);
+  // console.log("Creating user with name: ", name, " and email: ", email);
   // Create user
  const user= await prisma.user.create({
     data: {

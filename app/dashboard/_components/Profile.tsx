@@ -29,14 +29,14 @@ const Profile = ({ session, handleCopy, apiCopy }: { session: any; handleCopy: (
   const [showApiKey, setShowApiKey] = useState(false);
   const [user, setUser] = useRecoilState(userAtom);
   const { toast } = useToast();
-  console.log(user);
+  // console.log(user);
   const generateNewApiKey = async () => {
     // In a real app, this would make an API call
     const newKey = "sk_live_" + generateAPIToken();
     setUser({ ...user, apiKey: newKey });
     await updateUser({ ...user, apiKey: newKey })
       .then((res) => {
-        console.log("done");
+        ("done");
         toast({
           title: "API Key Regenerated",
           description: "Your API Key has been regenerated successfully",

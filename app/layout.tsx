@@ -31,7 +31,7 @@ weight: ['400',  '700'],
 
 
 export const metadata: Metadata = {
-  title: 'Snipshelf | save.share.reuse',
+  title: 'Snipshelf | shelf your code',
   description: 'Give your code a shelf',
   icons: [{ rel: 'icon', url: "/faviconPNG.png" }],
 

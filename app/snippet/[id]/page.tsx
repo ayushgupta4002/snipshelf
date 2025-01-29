@@ -107,7 +107,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
 
   const handleSave = async () => {
-    console.log("Save snippet:", snippet);
+    // console.log("Save snippet:", snippet);
     if (session && session.user.userId) {
       await updateSnippet(snippet, session.user.userId);
     } else {
@@ -149,7 +149,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             description: "data pushed successfully to github",
           });
         } else {
-          console.log(response);
+          // console.log(response);
           toast({
             title: "Error",
             description: response.error || "Error in pushing data to github",
@@ -206,7 +206,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             setSnippet({ ...snippet, gistId: "", gistUrl: "" });
           }
 
-          console.log(response);
+          // console.log(response);
           toast({
             title: "Error",
             description: response.error || "Error in pushing data to github",
@@ -243,7 +243,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     setTimeout(() => setShareCopy(false), 2000);
   };
   useEffect(() => {
-    console.log("called");
+    // console.log("called");
 
     const fetchData = async () => {
       // if share id exists then we will fetch snippets in diff useEffect
@@ -254,14 +254,14 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
         return;
       }
       if (status === "authenticated" && session?.user?.userId) {
-        console.log("Session authenticated:", session);
+        // console.log("Session authenticated:", session);
 
         try {
           const data = await getSnippetBySnipId({
             snipId: Number(params.id),
             userId: Number(session.user.userId),
           });
-          console.log("Data:", data);
+          // console.log("Data:", data);
 
           if (data) {
             setSnippet(data);
@@ -270,6 +270,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           console.error("Fetch error:", err);
         }
       } else {
+        
         console.log("Session not authenticated or missing userId");
       }
     };
@@ -692,7 +693,7 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   />
                 ) : (
                   <p className="text-muted-foreground leading-relaxed">
-                    {snippet.description}
+                    {snippet.description  ? snippet.description : <span onClick={()=>{setIsEditing(true)}} className="underline underline-offset-2 text-xl cursor-pointer">Add Description</span>}
                   </p>
                 )}
               </div>
@@ -765,12 +766,12 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                         className="relative pl-12 hover:bg-slate-700"
                       >
                         <span className="absolute left-0 w-8 h-full flex items-center justify-end pr-2 text-yellow-100 select-none [counter-increment:line] before:content-[counter(line)]" />
-                        {line || "\n"}
+                        {line != "\r" ? line : "\n"}
                       </div>
                     ))}
                     <div className="relative pl-12 hover:bg-slate-700">
                       <span className="absolute left-0 w-8  h-full flex items-center justify-end pr-2 text-yellow-100  select-none [counter-increment:line] before:content-[counter(line)]" />
-                      {"\n"}
+                     
                     </div>
                   </code>
                 </pre>

@@ -93,10 +93,10 @@ function Dashboard() {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log("Session:", session);
+    // console.log("Session:", session);
     const fetchData = async () => {
       if (status === "authenticated" && session?.user?.userId) {
-        console.log("Session authenticated:", session);
+        // console.log("Session authenticated:", session);
         // if(snippets.length >0 ){setLoading(true)}
         if(snippets.length>0){
           return;
@@ -108,7 +108,7 @@ setLoading(true);
           if (user) {
             setUser(user);
           }
-          console.log("Data:", data);
+          // console.log("Data:", data);
 
           setSnippets(data);
         } catch (err) {
@@ -117,7 +117,7 @@ setLoading(true);
           setLoading(false);
         }
       } else {
-        console.log("Session not authenticated or missing userId");
+        // console.log("Session not authenticated or missing userId");
         setLoading(false);
       }
     };
@@ -129,10 +129,10 @@ setLoading(true);
       console.error("Session not authenticated or missing userId");
       return;
     }
-    console.log("Deleting Account");
+    // console.log("Deleting Account");
     await deleteUserbyId(session.user.userId)
       .then(() => {
-        console.log("Account Deleted");
+        // console.log("Account Deleted");
         toast({
           title: "We will miss you `😢`",
           description: "Your account has been deleted!",
@@ -393,10 +393,10 @@ setLoading(true);
                       >
                         <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <CardTitle className="group-hover:text-primary transition-colors flex flex-row">
-                      {snippet.title?.substring(0, 20)}
-                      {snippet.title && snippet.title.length > 20 ? ".." : ""}                      </CardTitle>
-                      <CardDescription className="h-10 ">
+                      <CardTitle className="group-hover:text-primary text-xl transition-colors flex flex-row">
+                      {snippet.title?.substring(0, 30)}
+                      {snippet.title && snippet.title.length > 30 ? ".." : ""}                      </CardTitle>
+                      <CardDescription className="h-2 ">
                         {snippet.description?.substring(0, 120)}
                         {snippet.description && snippet.description.length > 120 ? "..." : ""}
                       </CardDescription>
