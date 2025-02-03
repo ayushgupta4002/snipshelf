@@ -4,6 +4,7 @@ import { AuthOptions, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { getSession } from "next-auth/react";
+import { cookies } from "next/headers";
 
 declare module "next-auth" {
   interface Session {
@@ -53,6 +54,9 @@ export const authOptions: AuthOptions = {
             isGuest: user.isGuest,
           });
 
+          const cookieStore = await cookies()
+          cookieStore.set('guestUserId', dbUser.id.toString())
+
           return {
             ...user,
             userId: dbUser.id,
@@ -85,8 +89,7 @@ export const authOptions: AuthOptions = {
           return false;
         }
         const session = await getSession();
-        const guestUserId = session?.user?.userId;
-        const isCurrentlyGuest = session?.user?.isGuest;
+
 
         const userExist = await prisma.user.findUnique({
           where: {
@@ -97,13 +100,17 @@ export const authOptions: AuthOptions = {
           return true;
         }
         console.log("User exist:", userExist);
-        console.log("Guest user id:", guestUserId);
-        console.log("Is currently guest:", isCurrentlyGuest);
 
-        if (isCurrentlyGuest && guestUserId && !userExist) {
+        const cookieStore = await cookies()
+
+         const guestUserId = cookieStore.get('guestUserId')?.value
+
+        if ( guestUserId && !userExist) {
           // in case user is converting from guest to registered user
           if (email && name) {
-            await transferGuestUser({ id: guestUserId, email, name });
+            console.log("Transferring guest user to registered user");
+            await transferGuestUser({ id: Number(guestUserId), email, name });
+            cookieStore.delete('guestUserId');
           } else {
             throw new Error("Email or name is missing");
           }

@@ -21,6 +21,7 @@ model User {
   apiKey   String    @unique
   githubToken String?
   isGuest  Boolean   @default(false)
+  createdAt DateTime  @default(now())
 }
 
 model Snippet {

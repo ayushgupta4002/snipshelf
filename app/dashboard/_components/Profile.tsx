@@ -58,7 +58,7 @@ const Profile = ({ session, handleCopy, apiCopy }: { session: any; handleCopy: (
           <img
             src={
               session.user?.image ||
-              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200"
+              "./catComp.jpeg"
             }
             alt="Profile"
             className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-2 border-zinc-700 object-cover"

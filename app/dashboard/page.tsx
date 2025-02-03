@@ -7,16 +7,12 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Suspense, useState, useEffect } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { deleteSnippetbyId, getSnippetByUserId } from "@/helpers/snippet";
 import {
   CodeIcon,
@@ -29,7 +25,7 @@ import {
   Eye,
   Trash2Icon,
   Check,
-  Copy
+  Copy,
 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -60,11 +56,11 @@ function Dashboard() {
   // const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [showApiKey, setShowApiKey] = useState(false);
   const [user, setUser] = useRecoilState<userAtom>(userAtom);
-  const[apiCopy , setApiCopy] = useState(false);
+  const [apiCopy, setApiCopy] = useState(false);
 
   const [snippets, setSnippets] = useRecoilState<snippetAtom[]>(snippetAtom);
   const [searchQuery, setSearchQuery] = useState("");
-  const[loading , setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const filteredSnippets = snippets.filter((snippet) => {
     const matchesSearch =
       searchQuery === "" ||
@@ -98,11 +94,11 @@ function Dashboard() {
       if (status === "authenticated" && session?.user?.userId) {
         // console.log("Session authenticated:", session);
         // if(snippets.length >0 ){setLoading(true)}
-        if(snippets.length>0){
+        if (snippets.length > 0) {
           return;
         }
         try {
-setLoading(true);
+          setLoading(true);
           const data = await getSnippetByUserId(session.user.userId);
           const user = await getUserByUserId(session.user.userId);
           if (user) {
@@ -113,7 +109,7 @@ setLoading(true);
           setSnippets(data);
         } catch (err) {
           console.error("Fetch error:", err);
-        }finally{
+        } finally {
           setLoading(false);
         }
       } else {
@@ -149,13 +145,11 @@ setLoading(true);
       console.error("Session not authenticated or missing userId");
       return;
     }
-    const targetSnippet = snippets.find(
-      (snippet) => snippet.id === Number(id)
-    );
-    if(!targetSnippet){
+    const targetSnippet = snippets.find((snippet) => snippet.id === Number(id));
+    if (!targetSnippet) {
       return;
     }
-    try {    
+    try {
       const newSnippets = snippets.filter(
         (snippet) => snippet.id !== Number(id)
       );
@@ -186,8 +180,8 @@ setLoading(true);
     }
   };
 
-  if(loading){
-    return <Loader />
+  if (loading) {
+    return <Loader />;
   }
 
   if (status === "loading") {
@@ -202,9 +196,7 @@ setLoading(true);
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(
-      user.apiKey
-    );
+    navigator.clipboard.writeText(user.apiKey);
     setApiCopy(true);
     setTimeout(() => setApiCopy(false), 2000);
   };
@@ -217,20 +209,22 @@ setLoading(true);
             <Link href={"/"}>
               {" "}
               <div className="flex items-center space-x-2 group">
-            <div className="p-2 rounded-full bg-zinc-600/90 group-hover:bg-zinc-400/80 transition-all duration-300">
-              <CodeIcon className="w-7 h-7 text-gray-200 group-hover:text-white transform rotate-12 group-hover:rotate-[-12] transition-all duration-300" />
-            </div>
-            <span className="text-3xl font-bold font-display bg-gradient-to-r from-gray-100 to-gray-300 text-transparent bg-clip-text">
-              Snipshelf
-            </span>
-          </div>
+                <div className="p-2 rounded-full bg-zinc-600/90 group-hover:bg-zinc-400/80 transition-all duration-300">
+                  <CodeIcon className="w-7 h-7 text-gray-200 group-hover:text-white transform rotate-12 group-hover:rotate-[-12] transition-all duration-300" />
+                </div>
+                <span className="text-3xl font-bold font-display bg-gradient-to-r from-gray-100 to-gray-300 text-transparent bg-clip-text">
+                  Snipshelf
+                </span>
+              </div>
             </Link>
             <div className="flex items-center space-x-4">
               <Dialog>
                 <DialogTrigger asChild>
                   <Avatar className="cursor-pointer">
-                    <AvatarImage src={session.user?.image} />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage
+                      src={session.user?.image || "./catComp.jpeg"}
+                    />
+                    <AvatarFallback>404</AvatarFallback>
                   </Avatar>
                 </DialogTrigger>
                 <DialogContent>
@@ -240,7 +234,7 @@ setLoading(true);
                         Name
                       </label>
                       <Input
-                        value={session.user?.name ??""}
+                        value={session.user?.name ?? ""}
                         readOnly
                         className="w-full"
                       />
@@ -281,17 +275,17 @@ setLoading(true);
                           )}
                         </Button>
                         <Button
-                              type="submit"
-                              size="sm"
-                              className="px-2"
-                              onClick={handleCopy}
-                            >
-                              {apiCopy ? (
-                                <Check className="h-4 w-4" />
-                              ) : (
-                                <Copy className="h-4 w-4" />
-                              )}
-                            </Button>
+                          type="submit"
+                          size="sm"
+                          className="px-2"
+                          onClick={handleCopy}
+                        >
+                          {apiCopy ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
                     </div>
                     <div className="flex flex-row space-x-2">
@@ -316,39 +310,51 @@ setLoading(true);
                 </DialogContent>
               </Dialog>
 
-              <Link href={"/integration/vscode"} className="hidden md:block" target="blank">
+              <Link
+                href={"/integration/vscode"}
+                className="hidden md:block"
+                target="blank"
+              >
                 <Button>
                   <PlusIcon className="h-4 w-4 mr-2" />
                   New Snippet
                 </Button>
               </Link>
-             { session.user.isGuest && <Button
-            variant="outline"
-            className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-sm border-white/20 text-white hover:text-white transition-all duration-300"
-            onClick={() => signIn("google")}
-          >
-            <div className="flex items-center justify-center gap-3">
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Sign in with Google
-            </div>
-          </Button>}
+              {session.user.isGuest && (
+                <Button
+                  variant="outline"
+                  className="w-full bg-white/5 hover:bg-white/10 backdrop-blur-sm border-white/20 text-white hover:text-white transition-all duration-300"
+                  onClick={async () => {
+                  
+                    await signIn("google", {
+                      callbackUrl: "/dashboard",
+                    })
+                  }
+                  }
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="currentColor"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="currentColor"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      />
+                      <path
+                        fill="currentColor"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      />
+                    </svg>
+                    Sign in with Google
+                  </div>
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -394,11 +400,16 @@ setLoading(true);
                         <ExternalLinkIcon className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <CardTitle className="group-hover:text-primary text-xl transition-colors flex flex-row">
-                      {snippet.title?.substring(0, 30)}
-                      {snippet.title && snippet.title.length > 30 ? ".." : ""}                      </CardTitle>
+                        {snippet.title?.substring(0, 30)}
+                        {snippet.title && snippet.title.length > 30
+                          ? ".."
+                          : ""}{" "}
+                      </CardTitle>
                       <CardDescription className="h-2 ">
                         {snippet.description?.substring(0, 120)}
-                        {snippet.description && snippet.description.length > 120 ? "..." : ""}
+                        {snippet.description && snippet.description.length > 120
+                          ? "..."
+                          : ""}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="mt-2">

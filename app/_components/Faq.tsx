@@ -103,7 +103,7 @@ function FaqSection() {
           <p className="text-white/70">
             Still have questions?{" "}
             <a href="mailto:ayush4002gupta@gmail.com" className="text-white hover:text-white/90 font-medium transition-colors">
-              Contact me
+              Contact Us
             </a>
           </p>
         </div>

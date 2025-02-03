@@ -74,9 +74,9 @@ export default function Home() {
               </div>
               <div className="bg-card rounded-xl p-8 shadow-lg border border-border/100">
                 <div className="prose prose-invert max-w-none">
-                  <p className="text-card-foreground text-lg mb-6">
-                    Install Snipshelf directly from VSCode&apos;s extension marketplace:
-                  </p>
+                    <p className="text-card-foreground text-lg mb-6">
+                    Install Snipshelf directly from <a href="https://marketplace.visualstudio.com/items?itemName=snipshelf.snipshelf" className="text-primary underline">VSCode&apos;s extension marketplace</a>:
+                    </p>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 text-muted-foreground">
                       <kbd className="px-2 py-1.5 bg-accent rounded text-sm">F1</kbd>

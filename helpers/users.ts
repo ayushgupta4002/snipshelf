@@ -7,16 +7,16 @@ import { User } from "@prisma/client";
 const data =[
   {
     id: 1,
-    title: "React useEffect Hook",
-    description: "Common useEffect patterns in React",
-    content: "useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []); useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);",
+    title: "Demo Widget",
+    description: "[demo] Common useEffect patterns in React",
+    content: "useEffect(() => {\n  // Effect code here\n  return () => {\n    // Cleanup code here\n  };\n}, []);",
     image:
       "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=300&h=200",
   },
   {
     id: 2,
-    title: "Tailwind Flex Center",
-    description: "Center elements with Tailwind CSS",
+    title: "Demo Widget 2",
+    description: "[demo] Center elements with Tailwind CSS",
     content: '<div className="flex items-center justify-center">\n  <!-- Content here -->\n</div>',
     image:
       "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=300&h=200",
