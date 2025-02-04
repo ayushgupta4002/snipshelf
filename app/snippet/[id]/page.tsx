@@ -15,6 +15,7 @@ import {
   ExternalLink,
   Trash2Icon,
   Copy,
+  Code2,
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -242,6 +243,11 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     setShareCopy(true);
     setTimeout(() => setShareCopy(false), 2000);
   };
+
+  useEffect(() => {
+    console.log(console.log(snippet.content.split("\n")));
+  }, [snippet]);
+
   useEffect(() => {
     // console.log("called");
 
@@ -270,7 +276,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
           console.error("Fetch error:", err);
         }
       } else {
-
         console.log("Session not authenticated or missing userId");
       }
     };
@@ -355,7 +360,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
       });
     }
   };
-
   const deleteSnippetShareLink = async (id: number) => {
     if (!session || !session.user.userId) {
       console.error("Session not authenticated or missing userId");
@@ -449,8 +453,6 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                         // onClick={handleCopy}
                         className="text-muted-foreground bg-transparent hover:bg-transparent hover:text-primary"
                       >
-                    
-
                         <ClipboardCopyIcon className="h-4 w-4 mr-2" />
                         share
                       </Button>
@@ -693,7 +695,18 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   />
                 ) : (
                   <p className="text-muted-foreground leading-relaxed">
-                    {snippet.description  ? snippet.description : <span onClick={()=>{setIsEditing(true)}} className="underline underline-offset-2 text-xl cursor-pointer">Add Description</span>}
+                    {snippet.description ? (
+                      snippet.description
+                    ) : (
+                      <span
+                        onClick={() => {
+                          setIsEditing(true);
+                        }}
+                        className="underline underline-offset-2 text-xl cursor-pointer"
+                      >
+                        Add Description
+                      </span>
+                    )}
                   </p>
                 )}
               </div>
@@ -732,24 +745,12 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Right Column - Code */}
-            <div className="bg-card rounded-lg border h-fit max-h-[70vh] border-zinc-100 overflow-hidden">
-              <div className="bg-transparent p-4 border-b border-border/50 flex items-center justify-between">
-                <span className="text-sm font-medium">code</span>
-                {/* <span className="text-xs text-muted-foreground">{snippet.language}</span> */}
+            <div className="bg-card rounded-lg border h-fit  border-zinc-100 ">
+              {/* <span className="text-xs text-muted-foreground">{snippet.language}</span> */}
 
-                <Button
-                  variant="default"
-                  onClick={handleCopyCode}
-                  className="text-muted-foreground bg-transparent hover:bg-transparent rounded-full hover:text-primary"
-                >
-                  {copied ? (
-                    <Check className="h-4 w-4 " />
-                  ) : (
-                    <Copy className="h-4 w-4 " />
-                  )}
-                </Button>
-              </div>
               {isEditing ? (
+
+                
                 <Textarea
                   value={snippet.content}
                   onChange={(e) =>
@@ -758,23 +759,42 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
                   className="font-mono text-sm min-h-[500px] rounded-none border-0 resize-none"
                 />
               ) : (
-                <pre className="relative overflow-auto max-h-[500px] text-sm font-mono pb-2">
-                  <code className="block pr-4  [counter-reset:line]">
-                    {snippet.content.split("\n").map((line, i) => (
-                      <div
-                        key={i}
-                        className="relative pl-12 hover:bg-slate-700"
-                      >
-                        <span className="absolute left-0 w-8 h-full flex items-center justify-end pr-2 text-yellow-100 select-none [counter-increment:line] before:content-[counter(line)]" />
-                        {line != "\r" ? line : "\n"}
-                      </div>
-                    ))}
-                    <div className="relative pl-12 hover:bg-slate-700">
-                      <span className="absolute left-0 w-8  h-full flex items-center justify-end pr-2 text-yellow-100  select-none [counter-increment:line] before:content-[counter(line)]" />
-                     {"\n"}
+                <div className="rounded-lg overflow-hidden bg-[#1E1E1E] text-white font-mono shadow-xl">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-[#2D2D2D] border-b border-[#404040]">
+                    <Code2 size={20} className="text-gray-400" />
+                    <span className="text-sm text-gray-300">Code Snippet</span>
+                    <Button
+                      variant="default"
+                      onClick={handleCopyCode}
+                      className="text-muted-foreground bg-transparent hover:bg-transparent rounded-full hover:text-primary"
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4 " />
+                      ) : (
+                        <Copy className="h-4 w-4 " />
+                      )}
+                    </Button>
+                  </div>
+                  <div className="p-4 bg-gradient-to-r from-[#1E1E1E] to-[#252525]">
+                    <div className="custom-scrollbar max-h-[60vh] overflow-y-auto rounded-md backdrop-blur-sm backdrop-filter">
+                      <pre className="relative overflow-x-auto custom-scrollbar">
+                        <code className="block min-w-full">
+                          {snippet.content.split('\n').map((line, index) => (
+                            <div
+                              key={index}
+                              className="flex whitespace-pre group hover:bg-[#2D2D2D] transition-colors duration-150"
+                            >
+                              <span className="w-12 inline-block text-gray-500 select-none flex-shrink-0 text-right pr-4 group-hover:text-gray-400 border-r border-[#404040] mr-4">
+                                {index + 1}
+                              </span>
+                              <span className="flex-1">{line}</span>
+                            </div>
+                          ))}
+                        </code>
+                      </pre>
                     </div>
-                  </code>
-                </pre>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -783,3 +803,5 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
+
