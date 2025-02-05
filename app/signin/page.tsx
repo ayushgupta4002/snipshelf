@@ -4,7 +4,7 @@
 
 import { signIn } from "next-auth/react";
 
-import { Code2, Terminal } from "lucide-react";
+import { ArrowRight, Code2, LogIn, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -39,7 +39,7 @@ function Page() {
         <div className="relative p-8">
           <div className="flex justify-center mb-8">
             <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/20">
-              <Code2 className="w-10 h-10 text-indigo-400" />
+              <Code2 className="w-10 h-10 text-white-400" />
             </div>
           </div>
 
@@ -84,9 +84,11 @@ function Page() {
             className="w-full bg-white/5 mt-2 hover:bg-white/10 backdrop-blur-sm border-white/20 text-white hover:text-white transition-all duration-300"
             onClick={() => handleGuestLogin()}
           >
-            <div className="flex items-center justify-center gap-3">
-              
-              Sign in as Guest
+            <div className="flex items-center justify-center gap-5">
+
+            <LogIn className="w-6 h-6" />
+
+              Sign in as a Guest
             </div>
           </Button>
 

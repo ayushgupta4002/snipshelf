@@ -26,6 +26,7 @@ import {
   Trash2Icon,
   Check,
   Copy,
+  PackageOpen,
 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -363,7 +364,7 @@ function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Profile session={session} handleCopy={handleCopy} apiCopy={apiCopy} />
         <div className="flex justify-between max-xs:flex-col  space-y-2 items-center mb-8">
-          <h1 className="text-3xl font-bold">Your Snips</h1>
+          <h1 className="text-3xl font-bold flex flex-row items-end gap-1">Your Snips <PackageOpen className="pb-1 h-7 w-7"  /></h1>
           <div className="relative">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
