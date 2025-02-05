@@ -53,7 +53,7 @@ function FAQItem({ item }: { item: FAQItem }) {
       >
         <div className="flex items-center gap-4">
           {item.icon}
-          <span className="text-lg font-medium text-white group-hover:text-white/90 transition-colors">
+          <span className="text-lg font-medium text-left text-white group-hover:text-white/90 transition-colors">
             {item.question}
           </span>
         </div>

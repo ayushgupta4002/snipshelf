@@ -750,14 +750,51 @@ export default function SnippetPage({ params }: { params: { id: string } }) {
 
               {isEditing ? (
 
-                
-                <Textarea
+                <>       <div className="rounded-lg overflow-hidden bg-[#1E1E1E] text-white font-mono shadow-xl">
+                <div className="flex items-center gap-2 px-4 py-2 bg-[#2D2D2D] border-b border-[#404040]">
+                  <Code2 size={20} className="text-gray-400" />
+                  <span className="text-sm text-gray-300">Code Snippet</span>
+                  <Button
+                    variant="default"
+                    onClick={handleCopyCode}
+                    className="text-muted-foreground bg-transparent hover:bg-transparent rounded-full hover:text-primary"
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4 " />
+                    ) : (
+                      <Copy className="h-4 w-4 " />
+                    )}
+                  </Button>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-[#1E1E1E] to-[#252525]">
+                  <div className="custom-scrollbar max-h-[60vh] overflow-y-auto rounded-md backdrop-blur-sm backdrop-filter">
+                    <pre className="relative overflow-x-auto custom-scrollbar">
+                      <code className="block min-w-full">
+
+                      <Textarea
                   value={snippet.content}
                   onChange={(e) =>
                     setSnippet({ ...snippet, content: e.target.value })
                   }
-                  className="font-mono text-sm min-h-[500px] rounded-none border-0 resize-none"
+                  className="font-mono text-sm h-[60vh] max-h-[60vh] rounded-none border-0 resize-none"
                 />
+                        {/* {snippet.content.split('\n').map((line, index) => (
+                          <div
+                            key={index}
+                            className="flex whitespace-pre group hover:bg-[#2D2D2D] transition-colors duration-150"
+                          >
+                            <span className="w-12 inline-block text-gray-500 select-none flex-shrink-0 text-right pr-4 group-hover:text-gray-400 border-r border-[#404040] mr-4">
+                              {index + 1}
+                            </span>
+                            <span className="flex-1">{line}</span>
+                          </div>
+                        ))} */}
+                      </code>
+                    </pre>
+                  </div>
+                </div>
+              </div></>
+                
               ) : (
                 <div className="rounded-lg overflow-hidden bg-[#1E1E1E] text-white font-mono shadow-xl">
                   <div className="flex items-center gap-2 px-4 py-2 bg-[#2D2D2D] border-b border-[#404040]">

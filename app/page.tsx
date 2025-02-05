@@ -109,10 +109,10 @@ export default function Home() {
             </div>
           </div>
 
-          <h1 className="text-4xl font-font1 -tracking-wide  opacity-0 animate-slidein300 font-bold text-center text-white mb-2">
+          <h1 className="text-4xl max-sm:text-2xl font-font1 -tracking-wide  opacity-0 animate-slidein300 font-bold text-center text-white mb-2">
             Save.Share.Reuse
           </h1>
-          <p className="text-center  text-xl opacity-0 animate-slidein500 text-slate-300 mb-2">
+          <p className="text-center  max-sm:text-base  text-xl opacity-0 animate-slidein500 text-slate-300 mb-2">
             Your go-to solution for effortlessly managing and reusing your
             coding components{" "}
           </p>
@@ -121,7 +121,7 @@ export default function Home() {
             alt="header"
             width={600}
             height={600}
-            className="w-[80%] mx-auto object-center rounded-sm  transition-all duration-200"
+            className="w-[80%] max-sm:w-[100%] mx-auto object-center rounded-sm  transition-all duration-200"
           />
         </div>
       </Card>
@@ -168,7 +168,7 @@ export default function Home() {
             alt="header"
             width={500}
             height={500}
-            className="w-[60%] mx-auto p-1  object-center rounded-sm  transition-all duration-200"
+            className="w-[60%] mx-auto p-1 max-md:w-[100%]  object-center rounded-sm  transition-all duration-200"
           />
           </div>
         </div>
